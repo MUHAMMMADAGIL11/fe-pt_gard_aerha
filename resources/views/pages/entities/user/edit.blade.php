@@ -67,7 +67,6 @@
                         @enderror
                     </div>
 
-                    <!-- Bagian Aktif dihapus sesuai permintaan -->
                 </div>
 
                 <div class="flex flex-col sm:flex-row sm:justify-end gap-3 pt-4">

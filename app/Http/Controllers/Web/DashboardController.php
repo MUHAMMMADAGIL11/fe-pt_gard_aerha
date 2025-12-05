@@ -1,7 +1,8 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Web;
 
+use App\Http\Controllers\Controller;
 use App\Models\Barang;
 use App\Models\Kategori;
 use App\Models\PermintaanBarang;
@@ -18,10 +19,7 @@ class DashboardController extends Controller
         $mauHabisCount = $lowStockCount;
         $totalStok = Barang::sum('stok');
         $permintaanPending = PermintaanBarang::where('status', 'Menunggu Persetujuan')->count();
-        $recentItems = Barang::with('kategori')
-            ->orderByDesc('id_barang')
-            ->take(5)
-            ->get();
+        $recentItems = Barang::with('kategori')->orderByDesc('id_barang')->take(5)->get();
         $transaksiMasukTerbaru = Transaksi::with('barang')
             ->where('jenis_transaksi', 'MASUK')
             ->orderByDesc('tanggal')
@@ -32,7 +30,6 @@ class DashboardController extends Controller
             ->orderByDesc('tanggal')
             ->take(5)
             ->get();
-
         $topBarangLaku = Transaksi::select('id_barang', DB::raw('SUM(jumlah) as total_keluar'))
             ->where('jenis_transaksi', 'KELUAR')
             ->with('barang')
@@ -55,3 +52,4 @@ class DashboardController extends Controller
         ));
     }
 }
+

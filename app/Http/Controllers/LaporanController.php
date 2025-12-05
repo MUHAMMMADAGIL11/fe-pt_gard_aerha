@@ -11,21 +11,17 @@ use Illuminate\Support\Facades\DB;
 
 class LaporanController extends Controller
 {
-    // GET /laporan - Melihat daftar laporan
     public function index(Request $request)
     {
         try {
             $user = $request->user();
             
-            // Hanya AdminGudang dan KepalaDivisi yang bisa melihat laporan
             if (!$user->hasRole(['AdminGudang', 'KepalaDivisi'])) {
                 return response()->json([
                     'success' => false,
                     'message' => 'Anda tidak memiliki akses untuk melihat laporan'
                 ], 403);
             }
-
-            // Simulasi daftar laporan (bisa disesuaikan dengan kebutuhan)
             $laporan = [
                 [
                     'id' => 1,
@@ -54,11 +50,9 @@ class LaporanController extends Controller
         }
     }
 
-    // GET /laporan/{id} - Detail laporan
     public function show($id)
     {
         try {
-            // Simulasi detail laporan
             $laporan = [
                 'id' => $id,
                 'jenis' => 'Laporan Stok',
@@ -83,13 +77,11 @@ class LaporanController extends Controller
         }
     }
 
-    // POST /laporan - Membuat laporan stok/transaksi
     public function store(Request $request)
     {
         try {
             $user = $request->user();
             
-            // Hanya AdminGudang dan KepalaDivisi yang bisa membuat laporan
             if (!$user->hasRole(['AdminGudang', 'KepalaDivisi'])) {
                 return response()->json([
                     'success' => false,
@@ -160,11 +152,9 @@ class LaporanController extends Controller
         }
     }
 
-    // GET /laporan/{id}/pdf - Download laporan PDF
     public function downloadPdf($id)
     {
         try {
-            // Simulasi - dalam implementasi nyata, gunakan library seperti DomPDF atau Snappy
             return response()->json([
                 'success' => false,
                 'message' => 'Fitur download PDF belum diimplementasikan. Silakan install library PDF seperti DomPDF.'
@@ -178,11 +168,9 @@ class LaporanController extends Controller
         }
     }
 
-    // GET /laporan/{id}/excel - Download laporan Excel
     public function downloadExcel($id)
     {
         try {
-            // Simulasi - dalam implementasi nyata, gunakan library seperti Maatwebsite/Excel
             return response()->json([
                 'success' => false,
                 'message' => 'Fitur download Excel belum diimplementasikan. Silakan install library Excel seperti Maatwebsite/Excel.'
@@ -196,13 +184,11 @@ class LaporanController extends Controller
         }
     }
 
-    // POST /laporan/export - Mengekspor laporan dalam format tertentu
     public function export(Request $request)
     {
         try {
             $user = $request->user();
             
-            // Hanya AdminGudang dan KepalaDivisi yang bisa export laporan
             if (!$user->hasRole(['AdminGudang', 'KepalaDivisi'])) {
                 return response()->json([
                     'success' => false,
@@ -225,7 +211,6 @@ class LaporanController extends Controller
                 ], 422);
             }
 
-            // Simulasi - dalam implementasi nyata, generate file dan return download
             return response()->json([
                 'success' => false,
                 'message' => 'Fitur export laporan belum diimplementasikan. Silakan install library PDF/Excel seperti DomPDF atau Maatwebsite/Excel.'
@@ -239,28 +224,22 @@ class LaporanController extends Controller
         }
     }
 
-    // Method khusus untuk KepalaDivisi: buatLaporan() - sesuai class diagram
     public function buatLaporan(Request $request)
     {
-        // Memanggil method store yang sudah ada
         return $this->store($request);
     }
 
-    // Method khusus untuk KepalaDivisi: cetakLaporan() - sesuai class diagram
     public function cetakLaporan(Request $request, $id = null)
     {
         try {
             $user = $request->user();
             
-            // Hanya KepalaDivisi yang bisa mencetak laporan
             if (!$user->hasRole('KepalaDivisi')) {
                 return response()->json([
                     'success' => false,
                     'message' => 'Hanya Kepala Divisi yang dapat mencetak laporan'
                 ], 403);
             }
-
-            // Jika ada id, gunakan downloadPdf atau downloadExcel
             if ($id) {
                 $format = $request->get('format', 'pdf');
                 if ($format === 'excel') {
@@ -268,8 +247,6 @@ class LaporanController extends Controller
                 }
                 return $this->downloadPdf($id);
             }
-
-            // Jika tidak ada id, gunakan export
             return $this->export($request);
         } catch (\Exception $e) {
             return response()->json([

@@ -11,6 +11,9 @@ class UserController extends Controller
 {
     public function index()
     {
+        if (!auth()->user()?->hasRole(['KepalaDivisi', 'AdminGudang'])) {
+            abort(403, 'Hanya Kepala Divisi atau Admin Gudang yang dapat mengelola user.');
+        }
         $users = User::orderBy('role')
             ->orderBy('username')
             ->paginate(15);
@@ -20,16 +23,30 @@ class UserController extends Controller
 
     public function create()
     {
-        return view('pages.entities.user.create');
+        $user = auth()->user();
+        if (!$user?->hasRole(['KepalaDivisi', 'Admin', 'AdminGudang'])) {
+            abort(403, 'Anda tidak memiliki akses untuk menambah user.');
+        }
+        $allowedRoles = $user->hasRole('KepalaDivisi')
+            ? ['AdminGudang','PetugasOperasional','KepalaDivisi','Admin']
+            : ['PetugasOperasional'];
+        return view('pages.entities.user.create', compact('allowedRoles'));
     }
 
     public function store(Request $request)
     {
+        $actor = auth()->user();
+        if (!$actor?->hasRole(['KepalaDivisi', 'Admin', 'AdminGudang'])) {
+            abort(403, 'Anda tidak memiliki akses untuk menambah user.');
+        }
+        $allowedRoles = $actor->hasRole('KepalaDivisi')
+            ? ['AdminGudang','PetugasOperasional','KepalaDivisi','Admin']
+            : ['PetugasOperasional'];
         $validated = $request->validate([
             'username' => ['required', 'string', 'max:50', 'unique:users,username'],
             'password' => ['required', 'string', 'min:6'],
             'nama_lengkap' => ['nullable', 'string', 'max:255'],
-            'role' => ['required', 'string', 'in:AdminGudang,PetugasOperasional,KepalaDivisi'],
+            'role' => ['required', 'string', 'in:' . implode(',', $allowedRoles)],
         ], [
             'username.required' => 'Username wajib diisi.',
             'username.unique' => 'Username sudah digunakan.',
@@ -53,6 +70,9 @@ class UserController extends Controller
 
     public function edit(int $userId)
     {
+        if (!auth()->user()?->hasRole('KepalaDivisi')) {
+            abort(403, 'Hanya Kepala Divisi yang dapat mengelola user.');
+        }
         $user = User::findOrFail($userId);
 
         return view('pages.entities.user.edit', compact('user'));
@@ -60,13 +80,16 @@ class UserController extends Controller
 
     public function update(Request $request, int $userId)
     {
+        if (!auth()->user()?->hasRole('KepalaDivisi')) {
+            abort(403, 'Hanya Kepala Divisi yang dapat mengelola user.');
+        }
         $user = User::findOrFail($userId);
 
         $validated = $request->validate([
             'username' => ['required', 'string', 'max:50', 'unique:users,username,' . $userId . ',id_user'],
             'password' => ['nullable', 'string', 'min:6'],
             'nama_lengkap' => ['nullable', 'string', 'max:255'],
-            'role' => ['required', 'string', 'in:AdminGudang,PetugasOperasional,KepalaDivisi'],
+            'role' => ['required', 'string', 'in:AdminGudang,PetugasOperasional,KepalaDivisi,Admin'],
         ], [
             'username.required' => 'Username wajib diisi.',
             'username.unique' => 'Username sudah digunakan.',
@@ -93,6 +116,9 @@ class UserController extends Controller
 
     public function destroy(int $userId)
     {
+        if (!auth()->user()?->hasRole('KepalaDivisi')) {
+            abort(403, 'Hanya Kepala Divisi yang dapat mengelola user.');
+        }
         $user = User::findOrFail($userId);
 
         if ($user->id_user === auth()->user()->id_user) {

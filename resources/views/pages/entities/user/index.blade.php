@@ -4,14 +4,15 @@
     <div class="space-y-8 px-2 sm:px-4">
         <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
             <div>
-                <p class="text-[11px] uppercase tracking-[0.35em] text-slate-400 font-semibold">Manajemen</p>
                 <h1 class="text-[26px] font-bold text-white mt-3">Manajemen Pengguna</h1>
                 <p class="text-[14px] text-slate-300 mt-1.5">Kelola akun pengguna sistem.</p>
             </div>
-            <a href="{{ route('user.create') }}"
-                class="inline-flex items-center justify-center gap-2 rounded-lg bg-[#B69364] px-6 py-2.5 text-[13px] font-semibold text-white shadow-md shadow-[#B69364]/40 hover:bg-[#a67f4f]">
-                + Tambah User
-            </a>
+            @if(auth()->user()?->hasRole(['KepalaDivisi', 'AdminGudang']))
+                <a href="{{ route('user.create') }}"
+                    class="inline-flex items-center justify-center gap-2 rounded-lg bg-[#B69364] px-6 py-2.5 text-[13px] font-semibold text-white shadow-md shadow-[#B69364]/40 hover:bg-[#a67f4f]">
+                    + Tambah User
+                </a>
+            @endif
         </div>
 
         <div class="bg-[#0F2536] rounded-2xl shadow-[0_18px_45px_rgba(0,0,0,0.45)] border border-white/5">
@@ -49,14 +50,16 @@
                                     </span>
                                 </td>
                                 <td class="px-7 py-3.5 text-right space-x-2">
-                                    <a href="{{ route('user.edit', $user->id_user) }}"
-                                        class="inline-flex items-center rounded-md border border-blue-200/40 px-3 py-1 text-[12px] font-semibold text-blue-200 hover:bg-blue-200/10">Edit</a>
-                                    @if($user->id_user !== auth()->user()->id_user)
-                                        <button type="button" data-delete data-name="{{ $user->username }}"
-                                            data-action="{{ route('user.destroy', $user->id_user) }}"
-                                            class="inline-flex items-center rounded-md border border-rose-200/40 px-3 py-1 text-[12px] font-semibold text-rose-200 hover:bg-rose-200/10">
-                                            Hapus
-                                        </button>
+                                    @if(auth()->user()?->hasRole('KepalaDivisi'))
+                                        <a href="{{ route('user.edit', $user->id_user) }}"
+                                            class="inline-flex items-center rounded-md border border-blue-200/40 px-3 py-1 text-[12px] font-semibold text-blue-200 hover:bg-blue-200/10">Edit</a>
+                                        @if($user->id_user !== auth()->user()->id_user)
+                                            <button type="button" data-delete data-name="{{ $user->username }}"
+                                                data-action="{{ route('user.destroy', $user->id_user) }}"
+                                                class="inline-flex items-center rounded-md border border-rose-200/40 px-3 py-1 text-[12px] font-semibold text-rose-200 hover:bg-rose-200/10">
+                                                Hapus
+                                            </button>
+                                        @endif
                                     @endif
                                 </td>
                             </tr>

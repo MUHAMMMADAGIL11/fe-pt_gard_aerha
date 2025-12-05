@@ -9,6 +9,7 @@
     $variantClasses = match ($variant) {
         'secondary' => 'text-slate-700 bg-white border border-slate-300 hover:bg-slate-50 focus-visible:outline-slate-400',
         'danger' => 'text-white bg-rose-600 hover:bg-rose-500 focus-visible:outline-rose-500',
+        'raw' => '',
         default => 'text-white bg-blue-600 hover:bg-blue-500 focus-visible:outline-blue-500',
     };
 @endphp

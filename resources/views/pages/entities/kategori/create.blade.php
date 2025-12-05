@@ -9,7 +9,6 @@
                 </svg>
                 Kembali ke Daftar Kategori
             </a>
-            <p class="text-[11px] uppercase tracking-[0.35em] text-slate-400 font-semibold">Master Data</p>
             <h1 class="text-[26px] font-bold text-white mt-3">Tambah Kategori Baru</h1>
             <p class="text-[14px] text-slate-300 mt-1.5">Tambah kategori baru untuk mengelompokkan barang.</p>
         </div>
@@ -42,5 +41,4 @@
             </form>
         </div>
     </div>
-@endsection
-
+ @endsection

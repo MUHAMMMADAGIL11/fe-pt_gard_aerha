@@ -3,34 +3,68 @@
 @section('content')
     <div class="space-y-8 px-2 sm:px-4">
         <div>
-            <p class="text-[11px] uppercase tracking-[0.35em] text-slate-400 font-semibold">Laporan</p>
             <h1 class="text-[26px] font-bold text-white mt-3">Laporan Inventori</h1>
             <p class="text-[14px] text-slate-300 mt-1.5">Lihat dan cetak laporan transaksi inventori.</p>
         </div>
 
+        <style>
+            input.custom-date[type="date"]::-webkit-calendar-picker-indicator { opacity: 0; pointer-events: none; }
+            .select-with-icon select { -webkit-appearance: none; -moz-appearance: none; appearance: none; background-image: none; }
+        </style>
         <div class="bg-[#0F2536] rounded-2xl shadow-[0_18px_45px_rgba(0,0,0,0.45)] border border-white/5 p-6 sm:p-8">
             <form method="GET" action="{{ route('laporan.index') }}" class="space-y-6 mb-6">
                 <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
                     <div class="space-y-2">
                         <label for="tanggal_mulai" class="block text-sm font-semibold text-white">Tanggal Mulai</label>
-                        <input type="date" id="tanggal_mulai" name="tanggal_mulai" value="{{ $tanggalMulai }}"
-                            class="w-full rounded-xl border border-white/10 bg-[#152c3f] px-4 py-3 text-sm text-white focus:border-[#B69364] focus:ring-2 focus:ring-[#B69364]/20">
+                        <div class="relative">
+                            <input type="text" id="tanggal_mulai" name="tanggal_mulai" value="{{ $tanggalMulai }}" placeholder="DD/MM/YYYY"
+                                onfocus="this.type='date'; this.showPicker && this.showPicker();"
+                                onblur="if(!this.value) { this.type='text'; this.value=''; }"
+                                class="w-full rounded-xl border border-white/10 bg-[#152c3f] px-4 pr-12 py-3 text-sm text-white placeholder:text-slate-300 placeholder:uppercase focus:border-[#B69364] focus:ring-2 focus:ring-[#B69364]/20 custom-date">
+                            <button type="button" class="absolute inset-y-0 right-3 flex items-center text-white/90"
+                                onclick="const el=this.previousElementSibling; el.type='date'; el.showPicker && el.showPicker(); el.focus();" aria-label="Pilih tanggal">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                    <rect x="3" y="4" width="18" height="16" rx="2" />
+                                    <path d="M16 2v4M8 2v4" />
+                                    <path d="M3 10h18" />
+                                </svg>
+                            </button>
+                        </div>
                     </div>
 
                     <div class="space-y-2">
                         <label for="tanggal_akhir" class="block text-sm font-semibold text-white">Tanggal Akhir</label>
-                        <input type="date" id="tanggal_akhir" name="tanggal_akhir" value="{{ $tanggalAkhir }}"
-                            class="w-full rounded-xl border border-white/10 bg-[#152c3f] px-4 py-3 text-sm text-white focus:border-[#B69364] focus:ring-2 focus:ring-[#B69364]/20">
+                        <div class="relative">
+                            <input type="text" id="tanggal_akhir" name="tanggal_akhir" value="{{ $tanggalAkhir }}" placeholder="DD/MM/YYYY"
+                                onfocus="this.type='date'; this.showPicker && this.showPicker();"
+                                onblur="if(!this.value) { this.type='text'; this.value=''; }"
+                                class="w-full rounded-xl border border-white/10 bg-[#152c3f] px-4 pr-12 py-3 text-sm text-white placeholder:text-slate-300 placeholder:uppercase focus:border-[#B69364] focus:ring-2 focus:ring-[#B69364]/20 custom-date">
+                            <button type="button" class="absolute inset-y-0 right-3 flex items-center text-white/90"
+                                onclick="const el=this.previousElementSibling; el.type='date'; el.showPicker && el.showPicker(); el.focus();" aria-label="Pilih tanggal">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                    <rect x="3" y="4" width="18" height="16" rx="2" />
+                                    <path d="M16 2v4M8 2v4" />
+                                    <path d="M3 10h18" />
+                                </svg>
+                            </button>
+                        </div>
                     </div>
 
                     <div class="space-y-2">
                         <label for="jenis" class="block text-sm font-semibold text-white">Jenis Transaksi</label>
-                        <select id="jenis" name="jenis"
-                            class="w-full rounded-xl border border-white/10 bg-[#152c3f] px-4 py-3 text-sm text-white focus:border-[#B69364] focus:ring-2 focus:ring-[#B69364]/20">
-                            <option value="semua" {{ $jenis === 'semua' ? 'selected' : '' }}>Semua</option>
-                            <option value="MASUK" {{ $jenis === 'MASUK' ? 'selected' : '' }}>Masuk</option>
-                            <option value="KELUAR" {{ $jenis === 'KELUAR' ? 'selected' : '' }}>Keluar</option>
-                        </select>
+                        <div class="relative select-with-icon">
+                            <select id="jenis" name="jenis"
+                                class="w-full rounded-xl border border-white/10 bg-[#152c3f] pl-4 pr-12 py-3 text-sm text-white appearance-none focus:border-[#B69364] focus:ring-2 focus:ring-[#B69364]/20">
+                                <option value="semua" {{ $jenis === 'semua' ? 'selected' : '' }}>Semua</option>
+                                <option value="MASUK" {{ $jenis === 'MASUK' ? 'selected' : '' }}>Masuk</option>
+                                <option value="KELUAR" {{ $jenis === 'KELUAR' ? 'selected' : '' }}>Keluar</option>
+                            </select>
+                            <span class="pointer-events-none absolute inset-y-0 right-3 flex items-center">
+                                <svg class="h-4 w-4 text-slate-300" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                                    <path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 10.94l3.71-3.71a.75.75 0 111.06 1.06l-4.24 4.24a.75.75 0 01-1.06 0L5.25 8.29a.75.75 0 01-.02-1.08z" clip-rule="evenodd" />
+                                </svg>
+                            </span>
+                        </div>
                     </div>
 
                     <div class="space-y-2 flex items-end">
@@ -110,4 +144,3 @@
         </div>
     </div>
 @endsection
-

@@ -1,15 +1,16 @@
 <?php
 
-namespace App\Http\Controllers\Api;
+namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use App\Models\Barang;
+use App\Models\User;
+use App\Models\Notifikasi;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
 class BarangController extends Controller
 {
-    // GET /barang - Melihat daftar barang & stoknya
     public function index(Request $request)
     {
         try {
@@ -30,7 +31,6 @@ class BarangController extends Controller
         }
     }
 
-    // GET /barang/{id} - Melihat detail barang
     public function show($id)
     {
         try {
@@ -56,40 +56,20 @@ class BarangController extends Controller
         }
     }
 
-    // POST /barang - Menambah barang baru
     public function store(Request $request)
     {
         try {
             $user = $request->user();
-            
-            // Debug: Log user info
-            \Log::debug('User authenticated: ', [
-                'user_id' => $user ? $user->id_user : null,
-                'username' => $user ? $user->username : null,
-                'role' => $user ? $user->role : null,
-                'all_user_data' => $user ? $user->toArray() : null
-            ]);
-            
-            // Cek apakah user ter-authenticate
             if (!$user) {
                 return response()->json([
                     'success' => false,
                     'message' => 'User tidak ter-authenticate. Silakan login terlebih dahulu.'
                 ], 401);
             }
-            
-            // Hanya AdminGudang yang bisa menambah barang
             if (!$user->hasRole('AdminGudang')) {
                 return response()->json([
                     'success' => false,
                     'message' => 'Hanya Admin Gudang yang dapat menambah barang',
-                    'debug' => [
-                        'current_role' => $user->role ?? 'NULL',
-                        'normalized_role' => \App\Models\User::normalizeRole($user->role),
-                        'expected_role' => 'AdminGudang',
-                        'user_id' => $user->id_user,
-                        'username' => $user->username
-                    ]
                 ], 403);
             }
 
@@ -100,7 +80,6 @@ class BarangController extends Controller
                 'stok' => 'nullable|integer|min:0',
                 'stok_minimum' => 'nullable|integer|min:0',
             ]);
-
             if ($validator->fails()) {
                 return response()->json([
                     'success' => false,
@@ -131,13 +110,10 @@ class BarangController extends Controller
         }
     }
 
-    // PUT /barang/{id} - Mengedit barang
     public function update(Request $request, $id)
     {
         try {
             $user = $request->user();
-            
-            // Hanya AdminGudang yang bisa mengedit barang
             if (!$user->hasRole('AdminGudang')) {
                 return response()->json([
                     'success' => false,
@@ -146,7 +122,6 @@ class BarangController extends Controller
             }
 
             $barang = Barang::find($id);
-
             if (!$barang) {
                 return response()->json([
                     'success' => false,
@@ -161,7 +136,6 @@ class BarangController extends Controller
                 'stok' => 'sometimes|integer|min:0',
                 'stok_minimum' => 'sometimes|integer|min:0',
             ]);
-
             if ($validator->fails()) {
                 return response()->json([
                     'success' => false,
@@ -192,13 +166,10 @@ class BarangController extends Controller
         }
     }
 
-    // DELETE /barang/{id} - Menghapus barang
     public function destroy(Request $request, $id)
     {
         try {
             $user = $request->user();
-            
-            // Hanya AdminGudang yang bisa menghapus barang
             if (!$user->hasRole('AdminGudang')) {
                 return response()->json([
                     'success' => false,
@@ -207,7 +178,6 @@ class BarangController extends Controller
             }
 
             $barang = Barang::find($id);
-
             if (!$barang) {
                 return response()->json([
                     'success' => false,
@@ -230,13 +200,10 @@ class BarangController extends Controller
         }
     }
 
-    // PATCH /barang/{id}/stok - Update stok barang
     public function updateStok(Request $request, $id)
     {
         try {
             $user = $request->user();
-            
-            // Hanya AdminGudang yang bisa update stok
             if (!$user->hasRole('AdminGudang')) {
                 return response()->json([
                     'success' => false,
@@ -245,7 +212,6 @@ class BarangController extends Controller
             }
 
             $barang = Barang::find($id);
-
             if (!$barang) {
                 return response()->json([
                     'success' => false,
@@ -256,7 +222,6 @@ class BarangController extends Controller
             $validator = Validator::make($request->all(), [
                 'stok' => 'required|integer|min:0',
             ]);
-
             if ($validator->fails()) {
                 return response()->json([
                     'success' => false,
@@ -266,6 +231,25 @@ class BarangController extends Controller
             }
 
             $barang->update(['stok' => $request->stok]);
+
+            $barang->refresh();
+            if ($barang->stok < $barang->stok_minimum) {
+                $targets = User::whereIn('role', ['AdminGudang', 'KepalaDivisi'])->pluck('id_user');
+                $message = 'Stok barang "'.$barang->nama_barang.'" di bawah minimum ('.$barang->stok.' < '.$barang->stok_minimum.').';
+                foreach ($targets as $uid) {
+                    $exists = Notifikasi::where('id_user', $uid)
+                        ->where('pesan', $message)
+                        ->where('is_read', false)
+                        ->exists();
+                    if (!$exists) {
+                        Notifikasi::create([
+                            'id_user' => $uid,
+                            'pesan' => $message,
+                            'is_read' => false,
+                        ]);
+                    }
+                }
+            }
 
             return response()->json([
                 'success' => true,
@@ -281,12 +265,10 @@ class BarangController extends Controller
         }
     }
 
-    // PATCH /barang/{id}/cek-minimum - Mengecek apakah stok di bawah minimum
     public function cekMinimum($id)
     {
         try {
             $barang = Barang::find($id);
-
             if (!$barang) {
                 return response()->json([
                     'success' => false,
@@ -313,13 +295,10 @@ class BarangController extends Controller
         }
     }
 
-    // Method khusus untuk PetugasOperasional: lihatStokBarang() - sesuai class diagram
     public function lihatStokBarang(Request $request)
     {
         try {
             $user = $request->user();
-            
-            // Hanya PetugasOperasional yang bisa melihat stok barang
             if (!$user->hasRole('PetugasOperasional')) {
                 return response()->json([
                     'success' => false,

@@ -9,13 +9,15 @@
     <title>{{ config('app.name', 'RPL Inventory') }}</title>
 
     @vite(['resources/css/app.css', 'resources/js/app.js'])
-    <!-- Inter font for sidebar branding -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@500;600;700&display=swap" rel="stylesheet">
     <style>
-        /* Plain background without overlays or blur */
         .app-shell { position: relative; min-height: 100vh; }
+        input[placeholder="DD/MM/YYYY"]:focus::placeholder { text-transform: lowercase; }
+        input[placeholder="DD/MM/YYYY"]:focus { text-transform: lowercase; }
+        input[placeholder="HH/BB/TTTT"]:focus::placeholder { text-transform: lowercase; }
+        input[placeholder="HH/BB/TTTT"]:focus { text-transform: lowercase; }
     </style>
 </head>
 
@@ -33,11 +35,10 @@
         ['label' => 'Stok Keluar', 'route' => 'transaksi-keluar.index', 'icon' => 'upload', 'roles' => ['AdminGudang']],
         ['label' => 'Permintaan Barang', 'route' => 'permintaan-barang.index', 'icon' => 'clipboard', 'roles' => ['all']],
         ['label' => 'Laporan', 'route' => 'laporan.index', 'icon' => 'file', 'roles' => ['AdminGudang', 'KepalaDivisi']],
-        ['label' => 'Pengguna', 'route' => 'user.index', 'icon' => 'users', 'roles' => ['AdminGudang']],
+        ['label' => 'Pengguna', 'route' => 'user.index', 'icon' => 'users', 'roles' => ['KepalaDivisi', 'AdminGudang']],
         ['label' => 'Log Aktivitas', 'route' => 'log-aktivitas.index', 'icon' => 'activity', 'roles' => ['all']],
     ];
 
-    // Filter navigation based on user role
     $navigation = array_filter($navigation, function($item) use ($isAdminGudang, $isPetugas, $isKepalaDivisi) {
         if (in_array('all', $item['roles'] ?? [])) {
             return true;
@@ -53,22 +54,27 @@
         }
         return false;
     });
+    $notifCount = 0;
+    $notifPreview = collect();
+    if ($user) {
+        $notifCount = \App\Models\Notifikasi::where('id_user', $user->id_user)->where('is_read', false)->count();
+        $notifPreview = \App\Models\Notifikasi::where('id_user', $user->id_user)->orderByDesc('id_notifikasi')->take(5)->get();
+    }
 @endphp
 
 <body class="font-sans antialiased bg-[#0f1924] text-slate-900">
-    <!-- Global background layer (plain image) -->
     <div class="fixed inset-0" id="appBg" style="z-index:0; pointer-events:none;">
         <img src="https://image2url.com/images/1763967903998-36cfe893-299a-4b2a-ae7b-d5922f960386.png" onerror="if(!this.dataset.fallback1){this.dataset.fallback1=1;this.src='{{ asset('images/latar.png') }}';}else{this.src='{{ asset('images/warehouse-blur.jpg') }}';}" alt="Background" class="w-full h-full object-cover">
     </div>
 
     <div class="app-shell relative z-[1] min-h-screen flex">
         <aside id="sidebar"
-            class="bg-[#041B26] text-white w-[240px] shrink-0 hidden md:flex md:flex-col transition-all duration-200 relative -top-[5px]">
-            <div class="px-6 py-1.5 border-b border-white/10 -mt-[4px] flex items-center gap-3 logo-wrapper">
-                <img src="https://image2url.com/images/1763968652947-ca796092-4a28-4c78-9565-acca57c494b9.png" alt="Logo" class="w-[80px] h-[75px] object-contain"
+            class="bg-[#041B26] text-white w-[240px] shrink-0 hidden md:flex md:flex-col transition-all duration-200">
+            <div class="px-6 py-3.5 -mt-2.5 border-b border-white/10 flex items-center gap-3 logo-wrapper">
+                <img src="https://image2url.com/images/1763968652947-ca796092-4a28-4c78-9565-acca57c494b9.png" alt="Logo" class="w-[64px] h-[60px] object-contain"
                      onerror="this.style.display='none'; this.parentElement.querySelector('.logo-fallback').classList.remove('hidden');">
-                <div class="logo-fallback hidden w-[80px] h-[75px] rounded-xl bg-white/10 flex items-center justify-center text-xl font-semibold text-white">PT</div>
-                <div class="w-[128px] h-[22px] flex items-center" style="font-family: 'Inter', sans-serif;">
+                <div class="logo-fallback hidden w-[64px] h-[60px] rounded-xl bg-white/10 flex items-center justify-center text-xl font-semibold text-white">PT</div>
+                <div class="w-[128px] h-[22px] flex items-center mt-1" style="font-family: 'Inter', sans-serif;">
                     <p class="font-semibold text-white text-[14px] leading-[22px]">PT. Garda Erha</p>
                 </div>
             </div>
@@ -166,7 +172,7 @@
         </aside>
 
         <div class="flex-1 flex flex-col min-h-screen">
-            <header class="bg-white border-b border-slate-100">
+            <header class="bg-white border-b border-slate-100 shadow-sm">
                 <div class="px-4 sm:px-6 lg:px-10 py-3.5 flex items-center justify-between gap-4">
                     <div class="flex items-center gap-3">
                         <button id="sidebarToggle"
@@ -176,26 +182,43 @@
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16" />
                             </svg>
                         </button>
-                        <div>
-                            <p class="text-[11px] uppercase tracking-[0.35em] text-slate-400">PT. GARDA ERHA</p>
+                        <div class="flex items-center">
                             <h1 class="text-lg font-semibold text-[#041B22]">Sistem Manajemen Gudang</h1>
                         </div>
                     </div>
-                    <div class="flex items-center gap-3">
-                        <button class="w-9 h-9 rounded-full bg-slate-100 flex items-center justify-center text-slate-500">
-                            <svg class="w-4.5 h-4.5" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
+                    <div class="flex items-center gap-3 relative">
+                        <button id="searchBtn" class="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center text-slate-500">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round"
                                     d="M21 21 16.65 16.65M19 11A8 8 0 1 1 3 11a8 8 0 0 1 16 0Z" />
                             </svg>
                         </button>
-                        <button class="w-9 h-9 rounded-full bg-slate-100 flex items-center justify-center text-slate-500">
-                            <svg class="w-4.5 h-4.5" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
+                        <button id="notifBtn" class="relative w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center text-slate-500">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round"
                                     d="M15 17h5l-1.405-1.405A2.032 2.032 0 0 1 18 14.158V11a6 6 0 1 0-12 0v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m1 0v1a2 2 0 1 0 4 0v-1" />
                             </svg>
+                            @if($notifCount > 0)
+                                <span class="absolute -top-1 -right-1 inline-flex items-center justify-center w-4 h-4 text-[10px] rounded-full bg-rose-500 text-white">{{ $notifCount }}</span>
+                            @endif
                         </button>
+                        <div id="notifDropdown" class="hidden absolute right-44 top-12 w-80 bg-white rounded-2xl shadow-xl border border-slate-100">
+                            <div class="px-4 py-3 border-b border-slate-100">
+                                <p class="text-sm font-semibold text-[#041B22]">Notifikasi</p>
+                            </div>
+                            <div class="max-h-64 overflow-y-auto">
+                                @forelse($notifPreview as $n)
+                                    <div class="px-4 py-3 border-b border-slate-100 text-sm">
+                                        <p class="text-slate-800">{{ $n->pesan }}</p>
+                                        <p class="text-xs text-slate-400 mt-1">ID #{{ $n->id_notifikasi }}</p>
+                                    </div>
+                                @empty
+                                    <div class="px-4 py-6 text-center text-slate-500 text-sm">Belum ada notifikasi.</div>
+                                @endforelse
+                            </div>
+                        </div>
                         @auth
-                            <div class="flex items-center gap-3 rounded-2xl border border-slate-100 px-3 py-1.5">
+                            <div class="flex items-center gap-4 rounded-2xl border border-slate-100 px-3.5 py-1.5">
                                 <div class="w-9 h-9 rounded-full bg-[#B69364]/20 text-[#B69364] flex items-center justify-center font-semibold uppercase">
                                     {{ \Illuminate\Support\Str::substr(auth()->user()->username ?? 'AG', 0, 2) }}
                                 </div>
@@ -268,7 +291,6 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            // Trigger global background fade-in
             const appBg = document.getElementById('appBg');
             requestAnimationFrame(() => appBg?.classList.add('app-bg-ready'));
 
@@ -295,7 +317,6 @@
                 }
             });
 
-            // Logout confirmation
             const logoutBtn = document.getElementById('logoutBtn');
             const logoutForm = document.getElementById('logoutForm');
             
@@ -316,6 +337,42 @@
                     const spinner = submitButton.querySelector('[data-spinner]');
                     spinner?.classList.remove('hidden');
                 });
+            });
+
+            const searchBtn = document.getElementById('searchBtn');
+            const searchModal = document.createElement('div');
+            searchModal.className = 'fixed inset-0 z-50 hidden';
+            searchModal.innerHTML = `
+                <div class="absolute inset-0 bg-black/40 backdrop-blur-sm"></div>
+                <div class="relative max-w-lg mx-auto mt-40 bg-white rounded-2xl shadow-2xl p-6 space-y-4">
+                    <input id="globalSearchInput" type="text" class="w-full rounded-xl border border-slate-200 px-4 py-3 text-sm focus:border-[#B69364] focus:ring-2 focus:ring-[#B69364]/20" placeholder="Cari barang berdasarkan nama atau kode..." />
+                    <div class="flex justify-end">
+                        <button id="globalSearchClose" class="inline-flex justify-center rounded-lg border border-slate-200 px-4 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-50">Tutup</button>
+                    </div>
+                </div>
+            `;
+            document.body.appendChild(searchModal);
+            const openSearch = () => { searchModal.classList.remove('hidden'); setTimeout(() => document.getElementById('globalSearchInput')?.focus(), 10); };
+            const closeSearch = () => searchModal.classList.add('hidden');
+            searchBtn?.addEventListener('click', openSearch);
+            searchModal.addEventListener('click', (e) => { if (e.target === searchModal) closeSearch(); });
+            document.getElementById('globalSearchClose')?.addEventListener('click', closeSearch);
+            document.getElementById('globalSearchInput')?.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter') {
+                    const q = e.target.value.trim();
+                    const url = `{{ route('barang.index') }}` + (q ? (`?q=` + encodeURIComponent(q)) : '');
+                    window.location.href = url;
+                }
+            });
+
+            const notifBtn = document.getElementById('notifBtn');
+            const notifDropdown = document.getElementById('notifDropdown');
+            const toggleNotif = () => notifDropdown.classList.toggle('hidden');
+            notifBtn?.addEventListener('click', (e) => { e.stopPropagation(); toggleNotif(); });
+            document.addEventListener('click', (e) => {
+                if (!notifDropdown.contains(e.target) && e.target !== notifBtn) {
+                    notifDropdown.classList.add('hidden');
+                }
             });
         });
     </script>

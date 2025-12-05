@@ -10,28 +10,24 @@ use Tymon\JWTAuth\Contracts\JWTSubject;
 class User extends Authenticatable implements JWTSubject
 {
     use HasFactory, Notifiable;
-
     /**
      * The primary key for the model.
      *
      * @var string
      */
     protected $primaryKey = 'id_user';
-
     /**
      * Indicates if the IDs are auto-incrementing.
      *
      * @var bool
      */
     public $incrementing = true;
-
     /**
      * Indicates if the model should be timestamped.
      *
      * @var bool
      */
     public $timestamps = false;
-
     /**
      * The attributes that are mass assignable.
      *
@@ -45,7 +41,6 @@ class User extends Authenticatable implements JWTSubject
         'is_active',
         'role'
     ];
-
     /**
      * The attributes that should be hidden for serialization.
      *
@@ -54,7 +49,6 @@ class User extends Authenticatable implements JWTSubject
     protected $hidden = [
         'password',
     ];
-
     /**
      * Get the attributes that should be cast.
      *
@@ -66,7 +60,6 @@ class User extends Authenticatable implements JWTSubject
             'is_aktif' => 'boolean',
         ];
     }
-
     /**
      * Get the identifier that will be stored in the subject claim of the JWT.
      *
@@ -76,7 +69,6 @@ class User extends Authenticatable implements JWTSubject
     {
         return $this->getKey();
     }
-
     /**
      * Return a key value array, containing any custom claims to be added to the JWT.
      *
@@ -86,7 +78,6 @@ class User extends Authenticatable implements JWTSubject
     {
         return [];
     }
-
     /**
      * Normalize role value untuk konsistensi
      * 
@@ -107,6 +98,8 @@ class User extends Authenticatable implements JWTSubject
             'admin gudang' => 'AdminGudang',
             'admingudang' => 'AdminGudang',
             'admin_gudang' => 'AdminGudang',
+            'admin' => 'Admin',
+            'administrator' => 'Admin',
             'petugas operasional' => 'PetugasOperasional',
             'petugasoperasional' => 'PetugasOperasional',
             'petugas_operasional' => 'PetugasOperasional',
@@ -147,13 +140,11 @@ class User extends Authenticatable implements JWTSubject
     {
         // Find the user by username
         $user = self::where('username', $username)->first();
-
         // Check if the user exists and if the password matches
         if ($user && Hash::check($password, $user->password)) {
             // Generate the JWT token if credentials are correct
             return JWTAuth::fromUser($user);
         }
-
         // Return false if login failed
         return false;
     }
@@ -162,7 +153,6 @@ class User extends Authenticatable implements JWTSubject
     {
         // Menghapus token JWT
         JWTAuth::invalidate($request->cookie('token'));
-
         // Mengembalikan respons dengan pesan logout sukses
         return response()->json([
             'message' => 'Berhasil logout'

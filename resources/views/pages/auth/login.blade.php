@@ -2,9 +2,10 @@
 
 @section('content')
     <div class="space-y-8">
-        <div class="text-center space-y-2">
-            <h1 class="text-[26px] font-semibold text-[#1A1A1A]">Welcome Back</h1>
-            <p class="text-[13px] text-slate-500">Please enter your details to login.</p>
+        <div class="text-center space-y-3">
+            <img src="https://image2url.com/images/1763968652947-ca796092-4a28-4c78-9565-acca57c494b9.png" alt="Logo PT Garda Erha" class="mx-auto w-20 h-20 object-contain" style="background: transparent;">
+            <h1 class="text-[26px] font-semibold text-[#1A1A1A]">PT. Garda Erha</h1>
+            <p class="text-[13px] text-slate-500">Sistem Inventori Gudang</p>
         </div>
 
         @if ($errors->any())
@@ -22,10 +23,10 @@
         <form method="POST" action="{{ route('login.process') }}" class="space-y-6" data-loading="true">
             @csrf
             <div class="space-y-2">
-                <label for="username" class="text-[14px] font-semibold text-[#1A1A1A]">Username</label>
+                <label for="username" class="block text-[14px] font-semibold text-[#1A1A1A]">Username</label>
                 <input id="username" type="text" name="username" value="{{ old('username') }}" autocomplete="username"
                     placeholder="Masukkan Username"
-                    class="w-full h-12 rounded-xl border border-[#E5E7EB] bg-white px-4 text-[14px] text-[#1A1A1A] placeholder:text-[#B3B3B3] focus:border-[#FF354C] focus:ring-[#FF354C]"
+                    class="w-full h-12 rounded-xl border border-[#1F2937] bg-white px-4 text-[14px] text-[#1A1A1A] placeholder:text-[#B3B3B3] focus:border-[#FF354C] focus:ring-[#FF354C] mt-2"
                     required autofocus>
                 @error('username')
                     <p class="text-xs text-rose-600">{{ $message }}</p>
@@ -33,10 +34,10 @@
             </div>
 
             <div class="space-y-2">
-                <label for="password" class="text-[14px] font-semibold text-[#1A1A1A]">Password</label>
-                <div class="relative">
+                <label for="password" class="block text-[14px] font-semibold text-[#1A1A1A]">Password</label>
+                <div class="relative mt-2">
                     <input id="password" type="password" name="password" placeholder="Masukkan password"
-                        class="w-full h-12 rounded-xl border border-[#E5E7EB] bg-white px-4 pr-12 text-[14px] text-[#1A1A1A] placeholder:text-[#B3B3B3] focus:border-[#FF354C] focus:ring-[#FF354C]"
+                        class="w-full h-12 rounded-xl border border-[#1F2937] bg-white px-4 pr-12 text-[14px] text-[#1A1A1A] placeholder:text-[#B3B3B3] focus:border-[#FF354C] focus:ring-[#FF354C]"
                         required>
                     <button type="button" id="togglePassword"
                         class="absolute inset-y-0 right-3 flex items-center text-slate-400 hover:text-[#FF354C]"
@@ -53,14 +54,17 @@
                 @enderror
             </div>
 
-            <div class="flex items-center justify-between">
-                <a href="#" class="text-[13px] font-medium text-slate-600 hover:text-slate-800">Forgot Password?</a>
+            <div class="flex items-center justify-between text-[13px] text-slate-600">
+                <label for="remember" class="inline-flex items-center gap-2">
+                    <input id="remember" name="remember" type="checkbox" class="rounded border-slate-300 text-[#FF354C] focus:ring-[#FF354C]">
+                    Remember me
+                </label>
             </div>
 
             <button type="submit"
                 class="w-full h-12 rounded-xl bg-[#FF354C] text-[14px] font-semibold text-white shadow-md hover:bg-[#E02D42] transition duration-150"
                 data-loading-button>
-                Log In
+                Masuk
             </button>
         </form>
     </div>

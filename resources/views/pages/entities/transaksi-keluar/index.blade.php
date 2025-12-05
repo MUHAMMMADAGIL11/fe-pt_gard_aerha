@@ -4,7 +4,6 @@
     <div class="space-y-8 px-2 sm:px-4">
         <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
             <div>
-                <p class="text-[11px] uppercase tracking-[0.35em] text-slate-400 font-semibold">Transaksi</p>
                 <h1 class="text-[26px] font-bold text-white mt-3">Barang Keluar</h1>
                 <p class="text-[14px] text-slate-300 mt-1.5">Catat semua transaksi barang keluar dari gudang.</p>
             </div>
@@ -58,5 +57,4 @@
             </div>
         </div>
     </div>
-@endsection
-
+ @endsection

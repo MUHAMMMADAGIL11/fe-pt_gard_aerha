@@ -1,7 +1,7 @@
 <?php
 
-use App\Http\Controllers\AuthController;
-use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\Web\AuthController;
+use App\Http\Controllers\Web\DashboardController;
 use App\Http\Controllers\Web\BarangController as BarangWebController;
 use App\Http\Controllers\Web\KategoriController;
 use App\Http\Controllers\Web\TransaksiMasukController;
@@ -56,7 +56,7 @@ Route::middleware('auth')->group(function () {
     Route::get('laporan', [LaporanController::class, 'index'])->name('laporan.index');
     Route::get('laporan/export-pdf', [LaporanController::class, 'exportPdf'])->name('laporan.export-pdf');
 
-    // User Management (Admin Gudang only)
+    // User Management (Kepala Divisi full, Admin hanya tambah Petugas)
     Route::resource('user', UserController::class)
         ->parameters(['user' => 'user']);
 

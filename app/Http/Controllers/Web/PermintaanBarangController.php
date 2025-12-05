@@ -38,7 +38,6 @@ class PermintaanBarangController extends Controller
 
     public function store(Request $request)
     {
-        // Pastikan hanya Petugas Operasional yang dapat mengajukan
         $user = auth()->user();
         if (!$user || !$user->hasRole('PetugasOperasional')) {
             return redirect()

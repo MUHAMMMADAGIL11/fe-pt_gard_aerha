@@ -9,13 +9,11 @@ use Illuminate\Support\Facades\Validator;
 
 class LogAktivitasController extends Controller
 {
-    // GET /logs - Melihat semua aktivitas (admin)
     public function index(Request $request)
     {
         try {
             $user = $request->user();
             
-            // Hanya AdminGudang yang bisa melihat semua log
             if (!$user->hasRole('AdminGudang')) {
                 return response()->json([
                     'success' => false,
@@ -40,13 +38,11 @@ class LogAktivitasController extends Controller
         }
     }
 
-    // GET /logs/user/{id} - Melihat aktivitas tertentu milik user
     public function getUserLogs(Request $request, $id)
     {
         try {
             $user = $request->user();
             
-            // Admin bisa melihat semua, user hanya bisa melihat log sendiri
             if (!$user->hasRole('AdminGudang') && $user->id_user != $id) {
                 return response()->json([
                     'success' => false,
@@ -71,7 +67,6 @@ class LogAktivitasController extends Controller
         }
     }
 
-    // POST /logaktivitas - Mencatat aktivitas baru
     public function store(Request $request)
     {
         try {

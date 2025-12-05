@@ -57,9 +57,19 @@
                             class="w-full rounded-xl border border-white/10 bg-[#152c3f] px-4 py-3 text-sm text-white focus:border-[#B69364] focus:ring-2 focus:ring-[#B69364]/20"
                             required>
                             <option value="">-- Pilih Role --</option>
-                            <option value="AdminGudang" {{ old('role') === 'AdminGudang' ? 'selected' : '' }}>Admin Gudang</option>
-                            <option value="PetugasOperasional" {{ old('role') === 'PetugasOperasional' ? 'selected' : '' }}>Petugas Operasional</option>
-                            <option value="KepalaDivisi" {{ old('role') === 'KepalaDivisi' ? 'selected' : '' }}>Kepala Divisi</option>
+                            @php
+                                $actor = auth()->user();
+                                $allowedRoles = (isset($allowedRoles) && is_array($allowedRoles))
+                                    ? $allowedRoles
+                                    : ($actor && $actor->hasRole('KepalaDivisi')
+                                        ? ['AdminGudang','PetugasOperasional','KepalaDivisi','Admin']
+                                        : ['PetugasOperasional']);
+                            @endphp
+                            @foreach ($allowedRoles as $r)
+                                <option value="{{ $r }}" {{ old('role') === $r ? 'selected' : '' }}>
+                                    {{ $r === 'AdminGudang' ? 'Admin Gudang' : ($r === 'PetugasOperasional' ? 'Petugas Operasional' : ($r === 'KepalaDivisi' ? 'Kepala Divisi' : 'Admin')) }}
+                                </option>
+                            @endforeach
                         </select>
                         @error('role')
                             <p class="text-xs text-rose-400">{{ $message }}</p>

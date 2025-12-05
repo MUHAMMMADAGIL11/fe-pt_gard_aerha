@@ -12,7 +12,7 @@
 
         $statusStyles = [
             'Disetujui' => 'bg-emerald-50 text-emerald-700',
-            'Pending' => 'bg-amber-50 text-amber-700',
+            'Pending' => 'bg-orange-100 text-orange-800 ring-1 ring-orange-200',
             'Ditolak' => 'bg-rose-50 text-rose-600',
             'Selesai' => 'bg-blue-50 text-blue-700',
             'Dibatalkan' => 'bg-rose-50 text-rose-600',
@@ -131,5 +131,4 @@
                 </div>
         </div>
     </div>
-@endsection
-
+ @endsection

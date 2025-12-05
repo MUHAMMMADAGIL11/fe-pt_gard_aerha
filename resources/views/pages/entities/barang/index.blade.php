@@ -4,7 +4,6 @@
     <div class="space-y-8 px-2 sm:px-4">
         <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
             <div>
-                <p class="text-[11px] uppercase tracking-[0.35em] text-slate-400 font-semibold">Master Data</p>
                 <h1 class="text-[26px] font-bold text-white mt-3">Daftar Barang</h1>
                 <p class="text-[14px] text-slate-300 mt-1.5">Kelola stok, kategori, dan detail barang dengan cepat.</p>
             </div>
@@ -108,7 +107,7 @@
                 button.addEventListener('click', () => {
                     const name = button.dataset.name ?? 'barang ini';
                     const action = button.dataset.action;
-                    modalText.textContent = `Anda akan menghapus ${name}. Tindakan ini tidak dapat dibatalkan.`;
+                    modalText.textContent = Anda akan menghapus ${name}. Tindakan ini tidak dapat dibatalkan.;
                     deleteForm.setAttribute('action', action);
                     openModal();
                 });
@@ -122,5 +121,4 @@
             });
         });
     </script>
-@endpush
-
+ @endpush

@@ -9,7 +9,6 @@ use Illuminate\Support\Facades\Validator;
 
 class KategoriController extends Controller
 {
-    // GET /kategori - Melihat daftar kategori barang
     public function index()
     {
         try {
@@ -28,13 +27,11 @@ class KategoriController extends Controller
         }
     }
 
-    // POST /kategori - Menambah kategori
     public function store(Request $request)
     {
         try {
             $user = $request->user();
             
-            // Hanya AdminGudang yang bisa menambah kategori
             if (!$user->hasRole('AdminGudang')) {
                 return response()->json([
                     'success' => false,
@@ -72,13 +69,11 @@ class KategoriController extends Controller
         }
     }
 
-    // PUT /kategori/{id} - Mengubah kategori
     public function update(Request $request, $id)
     {
         try {
             $user = $request->user();
             
-            // Hanya AdminGudang yang bisa mengubah kategori
             if (!$user->hasRole('AdminGudang')) {
                 return response()->json([
                     'success' => false,
@@ -123,13 +118,11 @@ class KategoriController extends Controller
         }
     }
 
-    // DELETE /kategori/{id} - Menghapus kategori
     public function destroy(Request $request, $id)
     {
         try {
             $user = $request->user();
             
-            // Hanya AdminGudang yang bisa menghapus kategori
             if (!$user->hasRole('AdminGudang')) {
                 return response()->json([
                     'success' => false,

@@ -9,21 +9,23 @@ use Illuminate\Http\Request;
 
 class BarangController extends Controller
 {
-    /**
-     * Menampilkan daftar barang pada halaman web.
-     */
-    public function index()
+    public function index(Request $request)
     {
+        $q = trim($request->get('q', ''));
         $barang = Barang::with('kategori')
+            ->when($q !== '', function($builder) use ($q) {
+                $builder->where(function($w) use ($q) {
+                    $w->where('nama_barang', 'like', "%$q%")
+                      ->orWhere('kode_barang', 'like', "%$q%");
+                });
+            })
             ->orderBy('nama_barang')
-            ->paginate(10);
+            ->paginate(10)
+            ->appends(['q' => $q]);
 
-        return view('pages.entities.barang.index', compact('barang'));
+        return view('pages.entities.barang.index', compact('barang', 'q'));
     }
 
-    /**
-     * Form tambah barang.
-     */
     public function create()
     {
         $categories = Kategori::orderBy('nama_kategori')->get();
@@ -31,9 +33,6 @@ class BarangController extends Controller
         return view('pages.entities.barang.create', compact('categories'));
     }
 
-    /**
-     * Simpan barang baru.
-     */
     public function store(Request $request)
     {
         $validated = $request->validate([
@@ -51,9 +50,6 @@ class BarangController extends Controller
             ->with('success', 'Barang berhasil ditambahkan.');
     }
 
-    /**
-     * Form edit barang.
-     */
     public function edit(int $barangId)
     {
         $barang = Barang::findOrFail($barangId);
@@ -62,9 +58,6 @@ class BarangController extends Controller
         return view('pages.entities.barang.edit', compact('barang', 'categories'));
     }
 
-    /**
-     * Update barang yang ada.
-     */
     public function update(Request $request, int $barangId)
     {
         $barang = Barang::findOrFail($barangId);
@@ -84,12 +77,8 @@ class BarangController extends Controller
             ->with('success', 'Barang berhasil diperbarui.');
     }
 
-    /**
-     * Hapus barang setelah konfirmasi.
-     */
     public function destroy(int $barangId)
     {
-        // Hanya Admin Gudang atau Kepala Divisi yang boleh menghapus
         $user = auth()->user();
         if (!$user || !$user->hasRole(['AdminGudang', 'KepalaDivisi'])) {
             return redirect()

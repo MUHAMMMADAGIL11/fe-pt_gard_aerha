@@ -4,7 +4,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\NotifikasiController;
 use App\Http\Controllers\LogAktivitasController;
-use App\Http\Controllers\Api\BarangController;
+use App\Http\Controllers\BarangController;
 use App\Http\Controllers\KategoriController;
 use App\Http\Controllers\PermintaanBarangController;
 use App\Http\Controllers\TransaksiMasukController;
@@ -102,45 +102,45 @@ Route::middleware(['jwt.cookie', 'auth:api'])->group(function () {
 // ROUTE ADMIN GUDANG
 Route::middleware(['jwt.cookie', 'auth:api'])->prefix('admin-gudang')->group(function () {
     // +tambahBarang(): boolean - sesuai class diagram
-    Route::post('tambah-barang', [BarangController::class, 'store']);
+    Route::post('tambah-barang', [BarangController::class, 'store'])->name('admin-gudang.tambah-barang');
     
     // +catatBarangMasuk(): boolean - sesuai class diagram
-    Route::post('catat-barang-masuk', [TransaksiMasukController::class, 'store']);
+    Route::post('catat-barang-masuk', [TransaksiMasukController::class, 'store'])->name('admin-gudang.catat-barang-masuk');
     
     // +catatBarangKeluar(): boolean - sesuai class diagram
-    Route::post('catat-barang-keluar', [TransaksiKeluarController::class, 'store']);
+    Route::post('catat-barang-keluar', [TransaksiKeluarController::class, 'store'])->name('admin-gudang.catat-barang-keluar');
     
     // +kelolaUser(): boolean - sesuai class diagram
-    Route::get('kelola-user', [UserController::class, 'indexKelolaUser']);
-    Route::get('kelola-user/{id}', [UserController::class, 'showKelolaUser']);
-    Route::post('kelola-user', [UserController::class, 'storeKelolaUser']);
-    Route::put('kelola-user/{id}', [UserController::class, 'updateKelolaUser']);
-    Route::delete('kelola-user/{id}', [UserController::class, 'destroyKelolaUser']);
+    Route::get('kelola-user', [UserController::class, 'indexKelolaUser'])->name('admin-gudang.kelola-user.index');
+    Route::get('kelola-user/{id}', [UserController::class, 'showKelolaUser'])->name('admin-gudang.kelola-user.show');
+    Route::post('kelola-user', [UserController::class, 'storeKelolaUser'])->name('admin-gudang.kelola-user.store');
+    Route::put('kelola-user/{id}', [UserController::class, 'updateKelolaUser'])->name('admin-gudang.kelola-user.update');
+    Route::delete('kelola-user/{id}', [UserController::class, 'destroyKelolaUser'])->name('admin-gudang.kelola-user.destroy');
     
     // +buatLaporan(): Laporan - sesuai class diagram
-    Route::post('buat-laporan', [LaporanController::class, 'store']);
+    Route::post('buat-laporan', [LaporanController::class, 'store'])->name('admin-gudang.buat-laporan');
 });
 
 // ROUTE PETUGAS OPERASIONAL
 Route::middleware(['jwt.cookie', 'auth:api'])->prefix('petugas-operasional')->group(function () {
     // +lihatStokBarang(): array - sesuai class diagram
-    Route::get('lihat-stok-barang', [BarangController::class, 'lihatStokBarang']);
+    Route::get('lihat-stok-barang', [BarangController::class, 'lihatStokBarang'])->name('petugas-operasional.lihat-stok-barang');
     
     // +ajukanPermintaan(): boolean - sesuai class diagram
-    Route::post('ajukan-permintaan', [PermintaanBarangController::class, 'store']);
+    Route::post('ajukan-permintaan', [PermintaanBarangController::class, 'store'])->name('petugas-operasional.ajukan-permintaan');
     
     // Method tambahan yang sudah ada
-    Route::post('menambahkan-transaksi', [TransaksiKeluarController::class, 'store']);
-    Route::post('menyelesaikan-permintaan', [PermintaanBarangController::class, 'selesaikanPermintaan']);
+    Route::post('menambahkan-transaksi', [TransaksiKeluarController::class, 'store'])->name('petugas-operasional.menambahkan-transaksi');
+    Route::post('menyelesaikan-permintaan', [PermintaanBarangController::class, 'selesaikanPermintaan'])->name('petugas-operasional.menyelesaikan-permintaan');
 });
 
 // ROUTE KEPALA DIVISI
 Route::middleware(['jwt.cookie', 'auth:api'])->prefix('kepala-divisi')->group(function () {
     // +buatLaporan(): Laporan - sesuai class diagram
-    Route::post('buat-laporan', [LaporanController::class, 'buatLaporan']);
+    Route::post('buat-laporan', [LaporanController::class, 'buatLaporan'])->name('kepala-divisi.buat-laporan');
     
     // +cetakLaporan(): File - sesuai class diagram
-    Route::post('cetak-laporan', [LaporanController::class, 'cetakLaporan']);
+    Route::post('cetak-laporan', [LaporanController::class, 'cetakLaporan'])->name('kepala-divisi.cetak-laporan');
     Route::get('cetak-laporan/{id}', [LaporanController::class, 'cetakLaporan']);
 });
 

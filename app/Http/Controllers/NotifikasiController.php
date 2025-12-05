@@ -9,7 +9,6 @@ use Illuminate\Support\Facades\Validator;
 
 class NotifikasiController extends Controller
 {
-    // GET /notifikasi - Melihat semua notifikasi user
     public function index(Request $request)
     {
         try {
@@ -32,13 +31,11 @@ class NotifikasiController extends Controller
         }
     }
 
-    // POST /notifikasi - Admin mengirim notifikasi ke user
     public function store(Request $request)
     {
         try {
             $user = $request->user();
             
-            // Hanya AdminGudang yang bisa mengirim notifikasi
             if (!$user->hasRole('AdminGudang')) {
                 return response()->json([
                     'success' => false,
@@ -79,7 +76,6 @@ class NotifikasiController extends Controller
         }
     }
 
-    // PATCH /notifikasi/{id}/read - Menandai notifikasi sudah dibaca
     public function markAsRead(Request $request, $id)
     {
         try {
@@ -112,7 +108,6 @@ class NotifikasiController extends Controller
         }
     }
 
-    // DELETE /notifikasi/{id} - Menghapus notifikasi
     public function destroy(Request $request, $id)
     {
         try {

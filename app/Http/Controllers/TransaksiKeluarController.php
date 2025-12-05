@@ -6,12 +6,13 @@ use App\Http\Controllers\Controller;
 use App\Models\Transaksi;
 use App\Models\TransaksiKeluar;
 use App\Models\Barang;
+use App\Models\User;
+use App\Models\Notifikasi;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
 class TransaksiKeluarController extends Controller
 {
-    
     public function index(Request $request)
     {
         try {
@@ -33,12 +34,10 @@ class TransaksiKeluarController extends Controller
         }
     }
 
-    
     public function store(Request $request)
     {
         try {
             $user = $request->user();
-            
             
             if (!$user->hasRole('AdminGudang')) {
                 return response()->json([
@@ -62,7 +61,6 @@ class TransaksiKeluarController extends Controller
                 ], 422);
             }
 
-            // Cek stok tersedia
             $barang = Barang::find($request->id_barang);
             if ($barang->stok < $request->jumlah) {
                 return response()->json([
@@ -71,7 +69,6 @@ class TransaksiKeluarController extends Controller
                 ], 400);
             }
 
-            // Buat transaksi
             $transaksi = Transaksi::create([
                 'id_user' => $user->id_user,
                 'id_barang' => $request->id_barang,
@@ -80,14 +77,24 @@ class TransaksiKeluarController extends Controller
                 'jumlah' => $request->jumlah,
             ]);
 
-            // Buat detail transaksi keluar
             $transaksiKeluar = TransaksiKeluar::create([
                 'id_transaksi' => $transaksi->id_transaksi,
                 'tujuan' => $request->tujuan,
             ]);
 
-            // Kurangi stok barang
             $barang->decrement('stok', $request->jumlah);
+
+            $barang->refresh();
+            if ($barang->stok < $barang->stok_minimum) {
+                $targets = User::whereIn('role', ['AdminGudang', 'KepalaDivisi'])->pluck('id_user');
+                foreach ($targets as $uid) {
+                    Notifikasi::create([
+                        'id_user' => $uid,
+                        'pesan' => 'Stok barang "'.$barang->nama_barang.'" di bawah minimum ('.$barang->stok.' < '.$barang->stok_minimum.').',
+                        'is_read' => false,
+                    ]);
+                }
+            }
 
             return response()->json([
                 'success' => true,
@@ -103,13 +110,11 @@ class TransaksiKeluarController extends Controller
         }
     }
 
-    // PUT /transaksi/keluar/{id} - Memperbarui status transaksi keluar
     public function update(Request $request, $id)
     {
         try {
             $user = $request->user();
             
-            // Hanya AdminGudang yang bisa update transaksi
             if (!$user->hasRole('AdminGudang')) {
                 return response()->json([
                     'success' => false,
@@ -141,7 +146,6 @@ class TransaksiKeluarController extends Controller
                 ], 422);
             }
 
-            // Update transaksi keluar detail jika ada
             if ($request->has('tujuan') && $transaksi->transaksiKeluar) {
                 $transaksi->transaksiKeluar->update([
                     'tujuan' => $request->tujuan

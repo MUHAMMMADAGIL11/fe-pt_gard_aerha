@@ -9,7 +9,6 @@
                 </svg>
                 Kembali ke Daftar Permintaan
             </a>
-            <p class="text-[11px] uppercase tracking-[0.35em] text-slate-400 font-semibold">Permintaan</p>
             <h1 class="text-[26px] font-bold text-white mt-3">Ajukan Permintaan Barang</h1>
             <p class="text-[14px] text-slate-300 mt-1.5">Ajukan permintaan barang untuk keperluan operasional.</p>
         </div>
@@ -85,7 +84,7 @@
                 const selectedOption = barangSelect.options[barangSelect.selectedIndex];
                 if (selectedOption && selectedOption.value) {
                     const stok = parseInt(selectedOption.dataset.stok || 0);
-                    stokInfo.textContent = `Stok tersedia: ${stok} pcs`;
+                    stokInfo.textContent = Stok tersedia: ${stok} pcs;
                     if (stok === 0) {
                         stokInfo.classList.add('text-amber-400');
                         stokInfo.textContent += ' (Stok habis - permintaan tetap bisa diajukan)';
@@ -98,5 +97,4 @@
             });
         });
     </script>
-@endpush
-
+ @endpush

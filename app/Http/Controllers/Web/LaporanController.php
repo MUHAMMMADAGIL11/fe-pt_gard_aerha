@@ -6,7 +6,6 @@ use App\Http\Controllers\Controller;
 use App\Models\Transaksi;
 use App\Models\Barang;
 use Illuminate\Http\Request;
-// use Barryvdh\DomPDF\Facade\Pdf;
 
 class LaporanController extends Controller
 {
@@ -61,14 +60,7 @@ class LaporanController extends Controller
         $totalKeluar = Transaksi::where('jenis_transaksi', 'KELUAR')
             ->whereBetween('tanggal', [$tanggalMulai, $tanggalAkhir])
             ->sum('jumlah');
-
-        // TODO: Install barryvdh/laravel-dompdf package for PDF export
-        // For now, return view instead
         return view('pages.entities.laporan.pdf', compact('transaksi', 'tanggalMulai', 'tanggalAkhir', 'jenis', 'totalMasuk', 'totalKeluar'));
-        
-        // Uncomment after installing: composer require barryvdh/laravel-dompdf
-        // $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('pages.entities.laporan.pdf', compact('transaksi', 'tanggalMulai', 'tanggalAkhir', 'jenis', 'totalMasuk', 'totalKeluar'));
-        // return $pdf->download('laporan-inventori-' . date('Y-m-d') . '.pdf');
     }
 }
 

@@ -11,7 +11,6 @@ use Illuminate\Support\Facades\Validator;
 
 class TransaksiMasukController extends Controller
 {
-    // GET /transaksi-masuk - Melihat semua barang masuk
     public function index(Request $request)
     {
         try {
@@ -33,13 +32,11 @@ class TransaksiMasukController extends Controller
         }
     }
 
-    // POST /transaksi-masuk - Mencatat barang masuk & menambah stok
     public function store(Request $request)
     {
         try {
             $user = $request->user();
             
-            // Hanya AdminGudang yang bisa mencatat transaksi masuk
             if (!$user->hasRole('AdminGudang')) {
                 return response()->json([
                     'success' => false,
@@ -62,7 +59,6 @@ class TransaksiMasukController extends Controller
                 ], 422);
             }
 
-            // Buat transaksi
             $transaksi = Transaksi::create([
                 'id_user' => $user->id_user,
                 'id_barang' => $request->id_barang,
@@ -71,13 +67,11 @@ class TransaksiMasukController extends Controller
                 'jumlah' => $request->jumlah,
             ]);
 
-            // Buat detail transaksi masuk
             $transaksiMasuk = TransaksiMasuk::create([
                 'id_transaksi' => $transaksi->id_transaksi,
                 'supplier' => $request->supplier,
             ]);
 
-            // Tambah stok barang
             $barang = Barang::find($request->id_barang);
             $barang->increment('stok', $request->jumlah);
 
@@ -95,13 +89,11 @@ class TransaksiMasukController extends Controller
         }
     }
 
-    // PUT /transaksi/masuk/{id} - Memperbarui status transaksi masuk
     public function update(Request $request, $id)
     {
         try {
             $user = $request->user();
             
-            // Hanya AdminGudang yang bisa update transaksi
             if (!$user->hasRole('AdminGudang')) {
                 return response()->json([
                     'success' => false,
@@ -133,7 +125,6 @@ class TransaksiMasukController extends Controller
                 ], 422);
             }
 
-            // Update transaksi masuk detail jika ada
             if ($request->has('supplier') && $transaksi->transaksiMasuk) {
                 $transaksi->transaksiMasuk->update([
                     'supplier' => $request->supplier
