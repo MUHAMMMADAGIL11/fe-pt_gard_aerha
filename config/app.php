@@ -133,7 +133,7 @@ return [
     /*
      * Package Service Providers...
      */
-    Tymon\JWTAuth\Providers\LaravelServiceProvider::class, // <-- Provider JWT
+    PHPOpenSourceSaver\JWTAuth\Providers\LaravelServiceProvider::class,
 
     /*
      * Application Service Providers...
