@@ -78,6 +78,7 @@ class PermintaanBarangController extends Controller
             $validator = Validator::make($request->all(), [
                 'id_barang' => 'required|integer|exists:barang,id_barang',
                 'jumlah_diminta' => 'required|integer|min:1',
+                'keterangan' => 'nullable|string|max:255',
             ]);
 
             if ($validator->fails()) {
@@ -92,8 +93,29 @@ class PermintaanBarangController extends Controller
                 'id_user' => $user->id_user,
                 'id_barang' => $request->id_barang,
                 'jumlah_diminta' => $request->jumlah_diminta,
+                'keterangan' => $request->keterangan,
                 'status' => 'Menunggu Persetujuan',
             ]);
+
+            $admins = User::where(function ($q) {
+                    $q->where('role', 'AdminGudang')
+                      ->orWhere(function ($qq) {
+                          $qq->whereNull('role')
+                             ->where(function ($qn) {
+                                 $qn->where('username', 'like', '%admin%')
+                                    ->orWhere('username', 'like', '%gudang%');
+                             });
+                      });
+                })
+                ->pluck('id_user');
+            $barangNama = Barang::find($request->id_barang)->nama_barang ?? 'Barang';
+            foreach ($admins as $adminId) {
+                Notifikasi::create([
+                    'id_user' => $adminId,
+                    'pesan' => 'Permintaan baru: \"' . $barangNama . '\" sejumlah ' . $request->jumlah_diminta . ' pcs dari ' . ($user->username ?? 'Petugas') . '.',
+                    'is_read' => false,
+                ]);
+            }
 
             return response()->json([
                 'success' => true,
@@ -148,6 +170,12 @@ class PermintaanBarangController extends Controller
 
             $permintaan->barang->decrement('stok', $permintaan->jumlah_diminta);
 
+            Notifikasi::create([
+                'id_user' => $permintaan->id_user,
+                'pesan' => 'Permintaan barang \"' . ($permintaan->barang->nama_barang ?? 'Barang') . '\" sejumlah ' . $permintaan->jumlah_diminta . ' pcs disetujui.',
+                'is_read' => false,
+            ]);
+
             return response()->json([
                 'success' => true,
                 'message' => 'Permintaan berhasil disetujui',
@@ -191,6 +219,12 @@ class PermintaanBarangController extends Controller
             }
 
             $permintaan->update(['status' => 'Ditolak']);
+
+            Notifikasi::create([
+                'id_user' => $permintaan->id_user,
+                'pesan' => 'Permintaan barang \"' . ($permintaan->barang->nama_barang ?? 'Barang') . '\" sejumlah ' . $permintaan->jumlah_diminta . ' pcs ditolak.',
+                'is_read' => false,
+            ]);
 
             return response()->json([
                 'success' => true,
@@ -253,7 +287,20 @@ class PermintaanBarangController extends Controller
 
                 $permintaan->barang->refresh();
                 if ($permintaan->barang->stok < $permintaan->barang->stok_minimum) {
-                    $targets = User::whereIn('role', ['AdminGudang', 'KepalaDivisi'])->pluck('id_user');
+                    $targets = User::where(function ($q) {
+                            $q->whereIn('role', ['AdminGudang', 'KepalaDivisi'])
+                              ->orWhere(function ($qq) {
+                                  $qq->whereNull('role')
+                                     ->where(function ($qn) {
+                                         $qn->where('username', 'like', '%admin%')
+                                            ->orWhere('username', 'like', '%gudang%')
+                                            ->orWhere('username', 'like', '%kepala%')
+                                            ->orWhere('username', 'like', '%kadiv%')
+                                            ->orWhere('username', 'like', '%divisi%');
+                                     });
+                              });
+                        })
+                        ->pluck('id_user');
                     $message = 'Stok barang "'.$permintaan->barang->nama_barang.'" di bawah minimum ('.$permintaan->barang->stok.' < '.$permintaan->barang->stok_minimum.').';
                     foreach ($targets as $uid) {
                         $exists = Notifikasi::where('id_user', $uid)
@@ -340,4 +387,3 @@ class PermintaanBarangController extends Controller
         }
     }
 }
-

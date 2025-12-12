@@ -31,6 +31,7 @@
                             <th class="px-7 py-4 font-semibold">Petugas</th>
                             <th class="px-7 py-4 font-semibold text-center">Jumlah</th>
                             <th class="px-7 py-4 font-semibold text-center">Status</th>
+                            <th class="px-7 py-4 font-semibold">Keterangan</th>
                             @if(auth()->user()->hasRole('AdminGudang'))
                                 <th class="px-7 py-4 font-semibold text-right">Aksi</th>
                             @endif
@@ -59,6 +60,7 @@
                                         {{ $item->status }}
                                     </span>
                                 </td>
+                                <td class="px-7 py-3.5 text-slate-300">{{ $item->keterangan ?: '-' }}</td>
                                 @if(auth()->user()->hasRole('AdminGudang'))
                                     <td class="px-7 py-3.5 text-right space-x-2">
                                         @if($item->status === 'Menunggu Persetujuan')
@@ -84,7 +86,7 @@
                             </tr>
                         @empty
                             <tr>
-                                <td class="px-6 py-6 text-center text-slate-400" colspan="{{ auth()->user()->hasRole('AdminGudang') ? 6 : 5 }}">
+                                <td class="px-6 py-6 text-center text-slate-400" colspan="{{ auth()->user()->hasRole('AdminGudang') ? 7 : 6 }}">
                                     Belum ada permintaan barang.
                                 </td>
                             </tr>

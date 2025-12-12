@@ -107,7 +107,7 @@
                 button.addEventListener('click', () => {
                     const name = button.dataset.name ?? 'barang ini';
                     const action = button.dataset.action;
-                    modalText.textContent = Anda akan menghapus ${name}. Tindakan ini tidak dapat dibatalkan.;
+                    modalText.textContent = `Anda akan menghapus ${name}. Tindakan ini tidak dapat dibatalkan.`;
                     deleteForm.setAttribute('action', action);
                     openModal();
                 });

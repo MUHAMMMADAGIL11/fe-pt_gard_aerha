@@ -14,6 +14,9 @@
             <p class="text-[14px] text-slate-300 mt-1.5">Tambah pengguna baru ke sistem.</p>
         </div>
 
+        <style>
+            .select-with-icon select { -webkit-appearance: none; -moz-appearance: none; appearance: none; background-image: none; }
+        </style>
         <div class="bg-[#0F2536] rounded-2xl shadow-[0_18px_45px_rgba(0,0,0,0.45)] border border-white/5 p-6 sm:p-8">
             <form method="POST" action="{{ route('user.store') }}" class="space-y-6" data-loading="true">
                 @csrf
@@ -53,24 +56,31 @@
 
                     <div class="space-y-2">
                         <label for="role" class="block text-sm font-semibold text-white">Role <span class="text-rose-400">*</span></label>
-                        <select id="role" name="role"
-                            class="w-full rounded-xl border border-white/10 bg-[#152c3f] px-4 py-3 text-sm text-white focus:border-[#B69364] focus:ring-2 focus:ring-[#B69364]/20"
-                            required>
-                            <option value="">-- Pilih Role --</option>
-                            @php
-                                $actor = auth()->user();
-                                $allowedRoles = (isset($allowedRoles) && is_array($allowedRoles))
-                                    ? $allowedRoles
-                                    : ($actor && $actor->hasRole('KepalaDivisi')
-                                        ? ['AdminGudang','PetugasOperasional','KepalaDivisi','Admin']
-                                        : ['PetugasOperasional']);
-                            @endphp
-                            @foreach ($allowedRoles as $r)
-                                <option value="{{ $r }}" {{ old('role') === $r ? 'selected' : '' }}>
-                                    {{ $r === 'AdminGudang' ? 'Admin Gudang' : ($r === 'PetugasOperasional' ? 'Petugas Operasional' : ($r === 'KepalaDivisi' ? 'Kepala Divisi' : 'Admin')) }}
-                                </option>
-                            @endforeach
-                        </select>
+                        <div class="relative select-with-icon">
+                            <select id="role" name="role"
+                                class="w-full rounded-xl border border-white/10 bg-[#152c3f] pl-4 pr-12 py-3 text-sm text-white appearance-none focus:border-[#B69364] focus:ring-2 focus:ring-[#B69364]/20"
+                                required>
+                                <option value="">-- Pilih Role --</option>
+                                @php
+                                    $actor = auth()->user();
+                                    $allowedRoles = (isset($allowedRoles) && is_array($allowedRoles))
+                                        ? $allowedRoles
+                                        : ($actor && $actor->hasRole('KepalaDivisi')
+                                            ? ['AdminGudang','PetugasOperasional','KepalaDivisi']
+                                            : ['PetugasOperasional']);
+                                @endphp
+                                @foreach ($allowedRoles as $r)
+                                    <option value="{{ $r }}" {{ old('role') === $r ? 'selected' : '' }}>
+                                        {{ $r === 'AdminGudang' ? 'Admin Gudang' : ($r === 'PetugasOperasional' ? 'Petugas Operasional' : 'Kepala Divisi') }}
+                                    </option>
+                                @endforeach
+                            </select>
+                            <span class="pointer-events-none absolute inset-y-0 right-3 flex items-center">
+                                <svg class="h-4 w-4 text-slate-300" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                                    <path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 10.94l3.71-3.71a.75.75 0 111.06 1.06l-4.24 4.24a.75.75 0 01-1.06 0L5.25 8.29a.75.75 0 01-.02-1.08z" clip-rule="evenodd" />
+                                </svg>
+                            </span>
+                        </div>
                         @error('role')
                             <p class="text-xs text-rose-400">{{ $message }}</p>
                         @enderror

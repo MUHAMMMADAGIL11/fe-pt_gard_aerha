@@ -10,6 +10,7 @@ use App\Http\Controllers\Web\PermintaanBarangController;
 use App\Http\Controllers\Web\LaporanController;
 use App\Http\Controllers\Web\UserController;
 use App\Http\Controllers\Web\LogAktivitasController;
+use App\Http\Controllers\NotifikasiController;
 use Illuminate\Support\Facades\Route;
 
 Route::redirect('/', '/login');
@@ -51,6 +52,10 @@ Route::middleware('auth')->group(function () {
         ->name('permintaan-barang.approve');
     Route::post('permintaan-barang/{permintaan_barang}/reject', [PermintaanBarangController::class, 'reject'])
         ->name('permintaan-barang.reject');
+
+    // Notifikasi (web guard)
+    Route::get('notifikasi', [NotifikasiController::class, 'index'])->name('notifikasi.index');
+    Route::patch('notifikasi/{id}/read', [NotifikasiController::class, 'markAsRead'])->name('notifikasi.read');
 
     // Laporan (Admin Gudang & Kepala Divisi)
     Route::get('laporan', [LaporanController::class, 'index'])->name('laporan.index');

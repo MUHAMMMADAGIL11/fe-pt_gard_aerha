@@ -24,11 +24,11 @@ class UserController extends Controller
     public function create()
     {
         $user = auth()->user();
-        if (!$user?->hasRole(['KepalaDivisi', 'Admin', 'AdminGudang'])) {
+        if (!$user?->hasRole(['KepalaDivisi', 'AdminGudang'])) {
             abort(403, 'Anda tidak memiliki akses untuk menambah user.');
         }
         $allowedRoles = $user->hasRole('KepalaDivisi')
-            ? ['AdminGudang','PetugasOperasional','KepalaDivisi','Admin']
+            ? ['AdminGudang','PetugasOperasional','KepalaDivisi']
             : ['PetugasOperasional'];
         return view('pages.entities.user.create', compact('allowedRoles'));
     }
@@ -36,11 +36,11 @@ class UserController extends Controller
     public function store(Request $request)
     {
         $actor = auth()->user();
-        if (!$actor?->hasRole(['KepalaDivisi', 'Admin', 'AdminGudang'])) {
+        if (!$actor?->hasRole(['KepalaDivisi', 'AdminGudang'])) {
             abort(403, 'Anda tidak memiliki akses untuk menambah user.');
         }
         $allowedRoles = $actor->hasRole('KepalaDivisi')
-            ? ['AdminGudang','PetugasOperasional','KepalaDivisi','Admin']
+            ? ['AdminGudang','PetugasOperasional','KepalaDivisi']
             : ['PetugasOperasional'];
         $validated = $request->validate([
             'username' => ['required', 'string', 'max:50', 'unique:users,username'],
@@ -89,7 +89,7 @@ class UserController extends Controller
             'username' => ['required', 'string', 'max:50', 'unique:users,username,' . $userId . ',id_user'],
             'password' => ['nullable', 'string', 'min:6'],
             'nama_lengkap' => ['nullable', 'string', 'max:255'],
-            'role' => ['required', 'string', 'in:AdminGudang,PetugasOperasional,KepalaDivisi,Admin'],
+            'role' => ['required', 'string', 'in:AdminGudang,PetugasOperasional,KepalaDivisi'],
         ], [
             'username.required' => 'Username wajib diisi.',
             'username.unique' => 'Username sudah digunakan.',

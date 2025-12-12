@@ -98,8 +98,6 @@ class User extends Authenticatable implements JWTSubject
             'admin gudang' => 'AdminGudang',
             'admingudang' => 'AdminGudang',
             'admin_gudang' => 'AdminGudang',
-            'admin' => 'Admin',
-            'administrator' => 'Admin',
             'petugas operasional' => 'PetugasOperasional',
             'petugasoperasional' => 'PetugasOperasional',
             'petugas_operasional' => 'PetugasOperasional',

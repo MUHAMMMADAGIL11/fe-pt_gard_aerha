@@ -234,7 +234,20 @@ class BarangController extends Controller
 
             $barang->refresh();
             if ($barang->stok < $barang->stok_minimum) {
-                $targets = User::whereIn('role', ['AdminGudang', 'KepalaDivisi'])->pluck('id_user');
+                $targets = User::where(function ($q) {
+                        $q->whereIn('role', ['AdminGudang', 'KepalaDivisi'])
+                          ->orWhere(function ($qq) {
+                              $qq->whereNull('role')
+                                 ->where(function ($qn) {
+                                     $qn->where('username', 'like', '%admin%')
+                                        ->orWhere('username', 'like', '%gudang%')
+                                        ->orWhere('username', 'like', '%kepala%')
+                                        ->orWhere('username', 'like', '%kadiv%')
+                                        ->orWhere('username', 'like', '%divisi%');
+                                 });
+                          });
+                    })
+                    ->pluck('id_user');
                 $message = 'Stok barang "'.$barang->nama_barang.'" di bawah minimum ('.$barang->stok.' < '.$barang->stok_minimum.').';
                 foreach ($targets as $uid) {
                     $exists = Notifikasi::where('id_user', $uid)

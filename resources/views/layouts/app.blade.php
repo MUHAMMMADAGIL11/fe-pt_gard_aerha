@@ -187,14 +187,14 @@
                         </div>
                     </div>
                     <div class="flex items-center gap-3 relative">
-                        <button id="searchBtn" class="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center text-slate-500">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
+                        <button id="searchBtn" class="w-8 h-8 rounded-full bg-white border border-slate-200 flex items-center justify-center text-[#041B22] hover:bg-slate-50">
+                            <svg class="w-4 h-4" fill="none" stroke="#041B22" stroke-width="2.4" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round"
                                     d="M21 21 16.65 16.65M19 11A8 8 0 1 1 3 11a8 8 0 0 1 16 0Z" />
                             </svg>
                         </button>
-                        <button id="notifBtn" class="relative w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center text-slate-500">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
+                        <button id="notifBtn" class="relative w-8 h-8 rounded-full bg-white border border-slate-200 flex items-center justify-center text-[#041B22] hover:bg-slate-50">
+                            <svg class="w-4 h-4" fill="none" stroke="#041B22" stroke-width="2.4" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round"
                                     d="M15 17h5l-1.405-1.405A2.032 2.032 0 0 1 18 14.158V11a6 6 0 1 0-12 0v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m1 0v1a2 2 0 1 0 4 0v-1" />
                             </svg>
@@ -202,32 +202,72 @@
                                 <span class="absolute -top-1 -right-1 inline-flex items-center justify-center w-4 h-4 text-[10px] rounded-full bg-rose-500 text-white">{{ $notifCount }}</span>
                             @endif
                         </button>
-                        <div id="notifDropdown" class="hidden absolute right-44 top-12 w-80 bg-white rounded-2xl shadow-xl border border-slate-100">
-                            <div class="px-4 py-3 border-b border-slate-100">
-                                <p class="text-sm font-semibold text-[#041B22]">Notifikasi</p>
+                        <div id="notifDropdown" class="hidden absolute right-44 top-12 z-50 w-96 bg-[#F3F8FF] rounded-2xl shadow-[0_18px_35px_rgba(0,0,0,0.15)] border border-[#D7E7FF]">
+                            <div class="px-4 py-3 border-b border-[#D7E7FF] bg-[#E7F1FF] rounded-t-2xl flex items-center justify-between">
+                                <p class="text-sm font-semibold text-[#0B2E4F]">Notifikasi</p>
+                                <button id="markAllReadBtn" class="inline-flex items-center gap-1 rounded-md border border-[#D7E7FF] px-2.5 py-1 text-xs font-semibold text-[#0B2E4F] hover:bg-[#ECF4FF]">
+                                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+                                    Tandai semua dibaca
+                                </button>
                             </div>
-                            <div class="max-h-64 overflow-y-auto">
+                            <div class="max-h-72 overflow-y-auto" id="notifList">
                                 @forelse($notifPreview as $n)
-                                    <div class="px-4 py-3 border-b border-slate-100 text-sm">
-                                        <p class="text-slate-800">{{ $n->pesan }}</p>
-                                        <p class="text-xs text-slate-400 mt-1">ID #{{ $n->id_notifikasi }}</p>
+                                    <div class="px-4 py-3 border-b border-[#D7E7FF] hover:bg-[#ECF4FF] text-sm cursor-pointer flex items-start gap-3" data-id="{{ $n->id_notifikasi }}">
+                                        <div class="w-8 h-8 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-700">
+                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0 1 18 14.158V11a6 6 0 1 0-12 0v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m1 0v1a2 2 0 1 0 4 0v-1"/></svg>
+                                        </div>
+                                        <div class="flex-1">
+                                            <p class="text-slate-800">{{ $n->pesan }}</p>
+                                            <p class="text-[11px] text-slate-400 mt-0.5">ID #{{ $n->id_notifikasi }}</p>
+                                        </div>
+                                        <span class="mt-1 w-2 h-2 rounded-full bg-rose-500 {{ $n->is_read ? 'opacity-0' : '' }}"></span>
                                     </div>
                                 @empty
-                                    <div class="px-4 py-6 text-center text-slate-500 text-sm">Belum ada notifikasi.</div>
+                                    <div class="px-6 py-8 text-center text-slate-600 text-sm">
+                                        <div class="mx-auto w-12 h-12 rounded-full bg-slate-100 flex items-center justify-center text-slate-400">
+                                            <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0 1 18 14.158V11a6 6 0 1 0-12 0v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m1 0v1a2 2 0 1 0 4 0v-1"/></svg>
+                                        </div>
+                                        <p class="mt-3">Belum ada notifikasi.</p>
+                                    </div>
                                 @endforelse
                             </div>
                         </div>
                         @auth
-                            <div class="flex items-center gap-4 rounded-2xl border border-slate-100 px-3.5 py-1.5">
-                                <div class="w-9 h-9 rounded-full bg-[#B69364]/20 text-[#B69364] flex items-center justify-center font-semibold uppercase">
+                            <div class="flex items-center gap-4 rounded-2xl border border-slate-200 bg-white px-3.5 py-1.5">
+                                <div class="w-9 h-9 rounded-full bg-[#B69364] text-white flex items-center justify-center font-semibold uppercase ring-2 ring-[#041B22]/60">
                                     {{ \Illuminate\Support\Str::substr(auth()->user()->username ?? 'AG', 0, 2) }}
                                 </div>
                                 <div class="text-sm">
                                     <p class="font-semibold text-[#041B22]">{{ auth()->user()->nama_lengkap ?? auth()->user()->username ?? 'User' }}</p>
-                                    <p class="text-xs text-slate-500">{{ ucfirst(str_replace('_', ' ', auth()->user()->role ?? 'Admin Gudang')) }}</p>
+                                    @php
+                                        $uname = strtolower(auth()->user()->username ?? '');
+                                        $rawRole = \App\Models\User::normalizeRole(auth()->user()->role ?? null);
+                                        if (!$rawRole || !in_array($rawRole, ['AdminGudang','PetugasOperasional','KepalaDivisi'])) {
+                                            if (str_contains($uname, 'admin') || str_contains($uname, 'gudang')) {
+                                                $rawRole = 'AdminGudang';
+                                            } elseif (str_contains($uname, 'kepala') || str_contains($uname, 'kadiv') || str_contains($uname, 'divisi')) {
+                                                $rawRole = 'KepalaDivisi';
+                                            } else {
+                                                $rawRole = 'PetugasOperasional';
+                                            }
+                                        }
+                                        $roleLabelMap = [
+                                            'AdminGudang' => 'Admin Gudang',
+                                            'PetugasOperasional' => 'Petugas Operasional',
+                                            'KepalaDivisi' => 'Kepala Divisi',
+                                        ];
+                                        $roleLabel = $roleLabelMap[$rawRole] ?? 'Pengguna';
+                                        $roleStyles = [
+                                            'AdminGudang' => 'bg-[#B69364]/15 text-[#B69364] border border-[#B69364]/30',
+                                            'PetugasOperasional' => 'bg-emerald-100 text-emerald-700 border border-emerald-200',
+                                            'KepalaDivisi' => 'bg-indigo-100 text-indigo-700 border border-indigo-200',
+                                        ];
+                                        $roleClass = $roleStyles[$rawRole] ?? 'bg-slate-100 text-slate-700 border border-slate-200';
+                                    @endphp
+                                    <span class="inline-flex items-center rounded-full px-2.5 py-0.5 text-[11px] font-semibold {{ $roleClass }}">{{ $roleLabel }}</span>
                                 </div>
                                 <button type="button" id="logoutBtn"
-                                    class="text-xs font-semibold text-[#B69364] hover:text-[#9d7d4f]">Logout</button>
+                                    class="inline-flex items-center rounded-md border border-slate-200 px-3 py-1 text-xs font-semibold text-[#041B22] hover:bg-slate-50">Logout</button>
                                 <form id="logoutForm" action="{{ route('logout') }}" method="POST" data-loading="true" class="hidden">
                                     @csrf
                                 </form>
@@ -367,12 +407,96 @@
 
             const notifBtn = document.getElementById('notifBtn');
             const notifDropdown = document.getElementById('notifDropdown');
+            const notifList = document.getElementById('notifList');
+            const badge = notifBtn?.querySelector('span');
             const toggleNotif = () => notifDropdown.classList.toggle('hidden');
             notifBtn?.addEventListener('click', (e) => { e.stopPropagation(); toggleNotif(); });
             document.addEventListener('click', (e) => {
                 if (!notifDropdown.contains(e.target) && e.target !== notifBtn) {
                     notifDropdown.classList.add('hidden');
                 }
+            });
+            let lastNotifs = [];
+
+                const renderNotifs = (items) => {
+                if (!notifList) return;
+                if (!Array.isArray(items) || items.length === 0) {
+                    notifList.innerHTML = '<div class="px-4 py-6 text-center text-slate-500 text-sm">Belum ada notifikasi.</div>';
+                    if (badge) { badge.remove(); }
+                    return;
+                }
+                const unread = items.filter(i => !i.is_read).length;
+                if (unread > 0) {
+                    if (badge) { badge.textContent = String(unread); }
+                    else {
+                        const b = document.createElement('span');
+                        b.className = 'absolute -top-1 -right-1 inline-flex items-center justify-center w-4 h-4 text-[10px] rounded-full bg-rose-500 text-white';
+                        b.textContent = String(unread);
+                        notifBtn.appendChild(b);
+                    }
+                } else if (badge) {
+                    badge.remove();
+                }
+                const pickType = (msg) => {
+                    const m = (msg || '').toLowerCase();
+                    if (m.includes('di bawah minimum')) return 'warning';
+                    if (m.includes('ditolak')) return 'danger';
+                    if (m.includes('disetujui')) return 'success';
+                    return 'info';
+                };
+                const iconSvg = (type) => {
+                    if (type === 'success') return '<path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/>';
+                    if (type === 'danger') return '<path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01M12 5a7 7 0 1 0 0 14 7 7 0 0 0 0-14z"/>';
+                    if (type === 'warning') return '<path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3m0 4h.01M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>';
+                    return '<path stroke-linecap="round" stroke-linejoin="round" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0 1 18 14.158V11a6 6 0 1 0-12 0v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m1 0v1a2 2 0 1 0 4 0v-1"/>';
+                };
+                const cls = (type) => ({
+                    success: { iconBg: 'bg-emerald-100', iconText: 'text-emerald-700', dot: 'bg-emerald-500' },
+                    danger: { iconBg: 'bg-rose-100', iconText: 'text-rose-700', dot: 'bg-rose-500' },
+                    warning: { iconBg: 'bg-amber-100', iconText: 'text-amber-700', dot: 'bg-amber-500' },
+                    info: { iconBg: 'bg-indigo-100', iconText: 'text-indigo-700', dot: 'bg-indigo-500' },
+                })[type] || { iconBg: 'bg-slate-100', iconText: 'text-slate-700', dot: 'bg-slate-400' };
+                notifList.innerHTML = items.slice(0, 10).map(n => {
+                    const type = pickType(n.pesan);
+                    const c = cls(type);
+                    return `
+                        <div class="px-4 py-3 border-b border-[#D7E7FF] text-sm cursor-pointer flex items-start gap-3 hover:bg-[#ECF4FF] ${n.is_read ? 'opacity-60' : ''}" data-id="${n.id_notifikasi}">
+                            <div class="w-8 h-8 rounded-full ${c.iconBg} flex items-center justify-center ${c.iconText}">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">${iconSvg(type)}</svg>
+                            </div>
+                            <div class="flex-1">
+                                <p class="text-slate-800">${n.pesan}</p>
+                                <p class="text-[11px] text-slate-400 mt-0.5">ID #${n.id_notifikasi}</p>
+                            </div>
+                            <span class="mt-1 w-2 h-2 rounded-full ${c.dot} ${n.is_read ? 'opacity-0' : ''}"></span>
+                        </div>
+                    `;
+                }).join('');
+            };
+
+            const fetchNotifs = async () => {
+                try {
+                    const res = await fetch('/notifikasi', { credentials: 'include' });
+                    const json = await res.json();
+                    if (json && json.success) { lastNotifs = json.data || []; renderNotifs(lastNotifs); }
+                } catch {}
+            };
+
+            notifBtn?.addEventListener('click', fetchNotifs);
+            notifList?.addEventListener('click', async (e) => {
+                const target = e.target.closest('[data-id]');
+                if (!target) return;
+                const id = target.getAttribute('data-id');
+                try {
+                    await fetch(`/notifikasi/${id}/read`, { method: 'PATCH', credentials: 'include', headers: { 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content') } });
+                } catch {}
+                target.classList.add('opacity-60');
+                fetchNotifs();
+            });
+            document.getElementById('markAllReadBtn')?.addEventListener('click', async () => {
+                const unreadIds = (lastNotifs || []).filter(n => !n.is_read).map(n => n.id_notifikasi);
+                await Promise.all(unreadIds.map(id => fetch(`/notifikasi/${id}/read`, { method: 'PATCH', credentials: 'include', headers: { 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content') } })));
+                fetchNotifs();
             });
         });
     </script>

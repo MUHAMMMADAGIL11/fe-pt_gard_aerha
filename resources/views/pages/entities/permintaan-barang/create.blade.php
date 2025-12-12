@@ -13,6 +13,14 @@
             <p class="text-[14px] text-slate-300 mt-1.5">Ajukan permintaan barang untuk keperluan operasional.</p>
         </div>
 
+        <style>
+            .select-with-icon select { -webkit-appearance: none; -moz-appearance: none; appearance: none; background-image: none; }
+            #jumlah_diminta { -moz-appearance: textfield; }
+            #jumlah_diminta::-webkit-outer-spin-button,
+            #jumlah_diminta::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+            #keterangan { scrollbar-width: none; -ms-overflow-style: none; }
+            #keterangan::-webkit-scrollbar { display: none; }
+        </style>
         <div class="bg-[#0F2536] rounded-2xl shadow-[0_18px_45px_rgba(0,0,0,0.45)] border border-white/5 p-6 sm:p-8">
             <form method="POST" action="{{ route('permintaan-barang.store') }}" class="space-y-6" data-loading="true">
                 @csrf
@@ -20,17 +28,24 @@
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div class="space-y-2">
                         <label for="id_barang" class="block text-sm font-semibold text-white">Pilih Barang <span class="text-rose-400">*</span></label>
-                        <select id="id_barang" name="id_barang"
-                            class="w-full rounded-xl border border-white/10 bg-[#152c3f] px-4 py-3 text-sm text-white focus:border-[#B69364] focus:ring-2 focus:ring-[#B69364]/20"
-                            required>
-                            <option value="">-- Pilih Barang --</option>
-                            @foreach ($barang as $item)
-                                <option value="{{ $item->id_barang }}" {{ old('id_barang') == $item->id_barang ? 'selected' : '' }}
-                                    data-stok="{{ $item->stok }}">
-                                    {{ $item->nama_barang }} ({{ $item->kode_barang }}) - Stok: {{ $item->stok }}
-                                </option>
-                            @endforeach
-                        </select>
+                        <div class="relative select-with-icon">
+                            <select id="id_barang" name="id_barang"
+                                class="w-full rounded-xl border border-white/10 bg-[#152c3f] pl-4 pr-12 py-3 text-sm text-white appearance-none focus:border-[#B69364] focus:ring-2 focus:ring-[#B69364]/20"
+                                required>
+                                <option value="">-- Pilih Barang --</option>
+                                @foreach ($barang as $item)
+                                    <option value="{{ $item->id_barang }}" {{ old('id_barang') == $item->id_barang ? 'selected' : '' }}
+                                        data-stok="{{ $item->stok }}">
+                                        {{ $item->nama_barang }} ({{ $item->kode_barang }}) - Stok: {{ $item->stok }}
+                                    </option>
+                                @endforeach
+                            </select>
+                            <span class="pointer-events-none absolute inset-y-0 right-3 flex items-center">
+                                <svg class="h-4 w-4 text-slate-300" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                                    <path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 10.94l3.71-3.71a.75.75 0 111.06 1.06l-4.24 4.24a.75.75 0 01-1.06 0L5.25 8.29a.75.75 0 01-.02-1.08z" clip-rule="evenodd" />
+                                </svg>
+                            </span>
+                        </div>
                         @error('id_barang')
                             <p class="text-xs text-rose-400">{{ $message }}</p>
                         @enderror
@@ -84,7 +99,7 @@
                 const selectedOption = barangSelect.options[barangSelect.selectedIndex];
                 if (selectedOption && selectedOption.value) {
                     const stok = parseInt(selectedOption.dataset.stok || 0);
-                    stokInfo.textContent = Stok tersedia: ${stok} pcs;
+                    stokInfo.textContent = `Stok tersedia: ${stok} pcs`;
                     if (stok === 0) {
                         stokInfo.classList.add('text-amber-400');
                         stokInfo.textContent += ' (Stok habis - permintaan tetap bisa diajukan)';

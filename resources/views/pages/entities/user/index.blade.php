@@ -34,14 +34,20 @@
                                 <td class="px-7 py-3.5 text-slate-300">{{ $user->nama_lengkap ?? '-' }}</td>
                                 <td class="px-7 py-3.5">
                                     @php
+                                        $normalized = \App\Models\User::normalizeRole($user->role ?? null) ?? '';
+                                        $roleLabelMap = [
+                                            'AdminGudang' => 'Admin Gudang',
+                                            'PetugasOperasional' => 'Petugas Operasional',
+                                            'KepalaDivisi' => 'Kepala Divisi',
+                                        ];
                                         $roleStyles = [
                                             'AdminGudang' => 'bg-blue-100/80 text-blue-700',
                                             'PetugasOperasional' => 'bg-green-100/80 text-green-700',
                                             'KepalaDivisi' => 'bg-purple-100/80 text-purple-700',
                                         ];
                                     @endphp
-                                    <span class="px-3 py-1 text-[12px] font-semibold rounded-full {{ $roleStyles[$user->role] ?? 'bg-slate-100/80 text-slate-700' }}">
-                                        {{ ucfirst(str_replace(['_', 'Gudang', 'Operasional', 'Divisi'], [' ', 'Gudang', 'Operasional', 'Divisi'], $user->role)) }}
+                                    <span class="px-3 py-1 text-[12px] font-semibold rounded-full {{ $roleStyles[$normalized] ?? 'bg-slate-100/80 text-slate-700' }}">
+                                        {{ $roleLabelMap[$normalized] ?? 'Pengguna' }}
                                     </span>
                                 </td>
                                 <td class="px-7 py-3.5 text-center">
