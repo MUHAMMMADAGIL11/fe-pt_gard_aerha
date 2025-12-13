@@ -5,29 +5,39 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+
+/* ✅ TAMBAHAN IMPORT (INI YANG BIKIN ERROR SEBELUMNYA) */
 use Tymon\JWTAuth\Contracts\JWTSubject;
+use Tymon\JWTAuth\Facades\JWTAuth;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Http\Request;
+use Symfony\Component\HttpFoundation\Response;
 
 class User extends Authenticatable implements JWTSubject
 {
     use HasFactory, Notifiable;
+
     /**
      * The primary key for the model.
      *
      * @var string
      */
     protected $primaryKey = 'id_user';
+
     /**
      * Indicates if the IDs are auto-incrementing.
      *
      * @var bool
      */
     public $incrementing = true;
+
     /**
      * Indicates if the model should be timestamped.
      *
      * @var bool
      */
     public $timestamps = false;
+
     /**
      * The attributes that are mass assignable.
      *
@@ -41,6 +51,7 @@ class User extends Authenticatable implements JWTSubject
         'is_active',
         'role'
     ];
+
     /**
      * The attributes that should be hidden for serialization.
      *
@@ -49,6 +60,7 @@ class User extends Authenticatable implements JWTSubject
     protected $hidden = [
         'password',
     ];
+
     /**
      * Get the attributes that should be cast.
      *
@@ -57,9 +69,11 @@ class User extends Authenticatable implements JWTSubject
     protected function casts(): array
     {
         return [
+            // ⚠️ DIPERTAHANKAN SESUAI KODE ASLI KAMU
             'is_aktif' => 'boolean',
         ];
     }
+
     /**
      * Get the identifier that will be stored in the subject claim of the JWT.
      *
@@ -69,6 +83,7 @@ class User extends Authenticatable implements JWTSubject
     {
         return $this->getKey();
     }
+
     /**
      * Return a key value array, containing any custom claims to be added to the JWT.
      *
@@ -78,9 +93,10 @@ class User extends Authenticatable implements JWTSubject
     {
         return [];
     }
+
     /**
      * Normalize role value untuk konsistensi
-     * 
+     *
      * @param string|null $role
      * @return string|null
      */
@@ -92,8 +108,7 @@ class User extends Authenticatable implements JWTSubject
 
         $role = trim($role);
         $roleLower = strtolower($role);
-        
-        // Mapping berbagai format role ke format standar
+
         $roleMap = [
             'admin gudang' => 'AdminGudang',
             'admingudang' => 'AdminGudang',
@@ -111,16 +126,15 @@ class User extends Authenticatable implements JWTSubject
 
     /**
      * Cek apakah user memiliki role tertentu (case-insensitive)
-     * 
-     * @param string|array $expectedRole Role yang diharapkan atau array of roles
+     *
+     * @param string|array $expectedRole
      * @return bool
      */
     public function hasRole($expectedRole)
     {
         $userRole = self::normalizeRole($this->role);
-        
+
         if (is_array($expectedRole)) {
-            // Jika array, cek apakah user memiliki salah satu role
             foreach ($expectedRole as $role) {
                 $expectedRoleNormalized = self::normalizeRole($role);
                 if ($userRole === $expectedRoleNormalized) {
@@ -129,33 +143,30 @@ class User extends Authenticatable implements JWTSubject
             }
             return false;
         }
-        
+
         $expectedRoleNormalized = self::normalizeRole($expectedRole);
         return $userRole === $expectedRoleNormalized;
     }
 
+    /* ================= AUTH LOGIC (DIPERTAHANKAN) ================= */
+
     public function login($username, $password)
     {
-        // Find the user by username
         $user = self::where('username', $username)->first();
-        // Check if the user exists and if the password matches
+
         if ($user && Hash::check($password, $user->password)) {
-            // Generate the JWT token if credentials are correct
             return JWTAuth::fromUser($user);
         }
-        // Return false if login failed
+
         return false;
     }
 
     public function logout(Request $request)
     {
-        // Menghapus token JWT
         JWTAuth::invalidate($request->cookie('token'));
-        // Mengembalikan respons dengan pesan logout sukses
+
         return response()->json([
             'message' => 'Berhasil logout'
-        ], Response::HTTP_OK)->withoutCookie('token'); // Menghapus cookie token
+        ], Response::HTTP_OK)->withoutCookie('token');
     }
-
-
 }
