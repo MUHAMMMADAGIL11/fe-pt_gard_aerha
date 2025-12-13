@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::table('permintaanbarang', function (Blueprint $table) {
             if (!Schema::hasColumn('permintaanbarang', 'keterangan')) {
-                $table->string('keterangan', 255)->nullable()->after('jumlah_diminta');
+                $table->string('keterangan', 255)->nullable();
             }
         });
     }
@@ -30,4 +30,3 @@ return new class extends Migration
         });
     }
 };
-
