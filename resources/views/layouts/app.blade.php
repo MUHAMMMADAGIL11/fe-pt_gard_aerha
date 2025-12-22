@@ -8,6 +8,7 @@
 
     <title>{{ config('app.name', 'RPL Inventory') }}</title>
 
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -317,13 +318,6 @@
                     <button type="button" id="mobileLogoutBtn" class="mx-3 mt-4 w-full rounded-lg border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-50">
                         Logout
                     </button>
-                    <script>
-                        document.getElementById('mobileLogoutBtn')?.addEventListener('click', () => {
-                            if (confirm('Yakin ingin logout dari sistem?')) {
-                                document.getElementById('mobileLogoutForm')?.submit();
-                            }
-                        });
-                    </script>
                 @endauth
             </nav>
         </div>
@@ -360,9 +354,141 @@
             const logoutBtn = document.getElementById('logoutBtn');
             const logoutForm = document.getElementById('logoutForm');
             
-            logoutBtn?.addEventListener('click', () => {
-                if (confirm('Yakin ingin logout dari sistem?')) {
-                    logoutForm?.submit();
+            logoutBtn?.addEventListener('click', (e) => {
+                e.preventDefault();
+                Swal.fire({
+                    title: 'Konfirmasi Logout',
+                    text: "Apakah Anda yakin ingin keluar dari sistem?",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonText: 'Ya, Logout',
+                    cancelButtonText: 'Batal',
+                    reverseButtons: true,
+                    backdrop: `rgba(0,0,0,0.6) backdrop-filter: blur(4px)`
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        logoutForm?.submit();
+                    }
+                });
+            });
+
+            // Global delete confirmation handler
+            document.addEventListener('click', function(e) {
+                if (e.target && e.target.closest('[data-delete]')) {
+                    const btn = e.target.closest('[data-delete]');
+                    const action = btn.getAttribute('data-action');
+                    const name = btn.getAttribute('data-name');
+                    
+                    Swal.fire({
+                        title: 'Hapus Data?',
+                        html: `Yakin ingin menghapus <b>${name}</b>?<br><span class="text-sm text-slate-500">Data yang dihapus tidak dapat dikembalikan.</span>`,
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonText: 'Ya, Hapus',
+                        cancelButtonText: 'Batal',
+                        confirmButtonColor: '#ef4444',
+                        reverseButtons: true,
+                        focusCancel: true
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            const form = document.createElement('form');
+                            form.method = 'POST';
+                            form.action = action;
+                            form.innerHTML = `
+                                <input type="hidden" name="_token" value="{{ csrf_token() }}">
+                                <input type="hidden" name="_method" value="DELETE">
+                            `;
+                            document.body.appendChild(form);
+                            form.submit();
+                        }
+                    });
+                }
+            });
+
+            // Mobile Sidebar Enhancement
+            const mobileLogoutBtn = document.getElementById('mobileLogoutBtn');
+            const mobileLogoutForm = document.getElementById('mobileLogoutForm');
+            mobileLogoutBtn?.addEventListener('click', (e) => {
+                e.preventDefault();
+                Swal.fire({
+                    title: 'Logout?',
+                    text: "Sesi Anda akan berakhir.",
+                    icon: 'question',
+                    showCancelButton: true,
+                    confirmButtonText: 'Logout',
+                    cancelButtonText: 'Batal'
+                }).then((result) => {
+                    if (result.isConfirmed) mobileLogoutForm?.submit();
+                });
+            });
+
+            // Global Search with Command Palette Style
+            const searchBtn = document.getElementById('searchBtn');
+            const searchModal = document.createElement('div');
+            searchModal.className = 'fixed inset-0 z-[100] hidden transition-opacity duration-200';
+            searchModal.innerHTML = `
+                <div class="absolute inset-0 bg-black/60 backdrop-blur-sm transition-opacity"></div>
+                <div class="relative w-full max-w-2xl mx-auto mt-20 sm:mt-32 px-4 transform transition-all scale-100">
+                    <div class="bg-[#152c3f] rounded-2xl shadow-2xl border border-white/10 overflow-hidden ring-1 ring-white/10">
+                        <div class="relative">
+                            <svg class="pointer-events-none absolute left-4 top-3.5 h-5 w-5 text-slate-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                              <path fill-rule="evenodd" d="M9 3.5a5.5 5.5 0 100 11 5.5 5.5 0 000-11zM2 9a7 7 0 1112.452 4.391l3.328 3.329a.75.75 0 11-1.06 1.06l-3.329-3.328A7 7 0 012 9z" clip-rule="evenodd" />
+                            </svg>
+                            <input id="globalSearchInput" type="text" 
+                                class="h-12 w-full border-0 bg-transparent pl-11 pr-4 text-white placeholder-slate-400 focus:ring-0 sm:text-sm" 
+                                placeholder="Cari menu, barang, atau fitur... (Tekan Ctrl+K)" role="combobox" aria-expanded="false" aria-controls="options">
+                        </div>
+                        <div class="border-t border-white/5 px-2 py-3">
+                            <p class="text-xs text-slate-500 px-2 font-semibold uppercase tracking-wider mb-2">Akses Cepat</p>
+                            <ul class="text-sm text-slate-300 space-y-1" id="searchResults">
+                                <li>
+                                    <a href="{{ route('dashboard') }}" class="block px-2 py-2 rounded-lg hover:bg-white/5 cursor-pointer flex items-center gap-2">
+                                        <svg class="w-4 h-4 text-[#B69364]" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" /></svg>
+                                        Dashboard
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="{{ route('barang.index') }}" class="block px-2 py-2 rounded-lg hover:bg-white/5 cursor-pointer flex items-center gap-2">
+                                        <svg class="w-4 h-4 text-[#B69364]" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" /></svg>
+                                        Daftar Barang
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="{{ route('laporan.index') }}" class="block px-2 py-2 rounded-lg hover:bg-white/5 cursor-pointer flex items-center gap-2">
+                                        <svg class="w-4 h-4 text-[#B69364]" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>
+                                        Laporan & Export
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="bg-black/20 px-4 py-2.5 text-xs text-slate-500 border-t border-white/5 flex justify-between items-center">
+                            <span>Tekan <kbd class="font-sans px-1 py-0.5 rounded bg-white/10 text-slate-300">Esc</kbd> untuk menutup</span>
+                            <span>PT. Garda Erha System</span>
+                        </div>
+                    </div>
+                </div>
+            `;
+            document.body.appendChild(searchModal);
+
+            const openSearch = () => { 
+                searchModal.classList.remove('hidden'); 
+                setTimeout(() => document.getElementById('globalSearchInput')?.focus(), 50); 
+            };
+            const closeSearch = () => searchModal.classList.add('hidden');
+            
+            searchBtn?.addEventListener('click', openSearch);
+            searchModal.addEventListener('click', (e) => { 
+                if (e.target.closest('.relative.w-full') === null) closeSearch(); 
+            });
+            
+            // Shortcut Ctrl+K
+            document.addEventListener('keydown', (e) => {
+                if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
+                    e.preventDefault();
+                    searchModal.classList.contains('hidden') ? openSearch() : closeSearch();
+                }
+                if (e.key === 'Escape' && !searchModal.classList.contains('hidden')) {
+                    closeSearch();
                 }
             });
 
@@ -370,34 +496,23 @@
                 form.addEventListener('submit', () => {
                     const submitButton = form.querySelector('button[type="submit"]');
                     if (!submitButton) return;
-
                     submitButton.setAttribute('disabled', 'disabled');
                     submitButton.classList.add('opacity-75', 'cursor-wait');
-
-                    const spinner = submitButton.querySelector('[data-spinner]');
-                    spinner?.classList.remove('hidden');
+                    
+                    // Show SweetAlert Loading
+                    Swal.fire({
+                        title: 'Memproses...',
+                        text: 'Mohon tunggu sebentar',
+                        allowOutsideClick: false,
+                        showConfirmButton: false,
+                        willOpen: () => { Swal.showLoading() }
+                    });
                 });
             });
 
-            const searchBtn = document.getElementById('searchBtn');
-            const searchModal = document.createElement('div');
-            searchModal.className = 'fixed inset-0 z-50 hidden';
-            searchModal.innerHTML = `
-                <div class="absolute inset-0 bg-black/40 backdrop-blur-sm"></div>
-                <div class="relative max-w-lg mx-auto mt-40 bg-white rounded-2xl shadow-2xl p-6 space-y-4">
-                    <input id="globalSearchInput" type="text" class="w-full rounded-xl border border-slate-200 px-4 py-3 text-sm focus:border-[#B69364] focus:ring-2 focus:ring-[#B69364]/20" placeholder="Cari barang berdasarkan nama atau kode..." />
-                    <div class="flex justify-end">
-                        <button id="globalSearchClose" class="inline-flex justify-center rounded-lg border border-slate-200 px-4 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-50">Tutup</button>
-                    </div>
-                </div>
-            `;
-            document.body.appendChild(searchModal);
-            const openSearch = () => { searchModal.classList.remove('hidden'); setTimeout(() => document.getElementById('globalSearchInput')?.focus(), 10); };
-            const closeSearch = () => searchModal.classList.add('hidden');
-            searchBtn?.addEventListener('click', openSearch);
-            searchModal.addEventListener('click', (e) => { if (e.target === searchModal) closeSearch(); });
-            document.getElementById('globalSearchClose')?.addEventListener('click', closeSearch);
-            document.getElementById('globalSearchInput')?.addEventListener('keydown', (e) => {
+            // Handle Search Input Enter Key
+            const globalSearchInput = document.getElementById('globalSearchInput');
+            globalSearchInput?.addEventListener('keydown', (e) => {
                 if (e.key === 'Enter') {
                     const q = e.target.value.trim();
                     const url = `{{ route('barang.index') }}` + (q ? (`?q=` + encodeURIComponent(q)) : '');

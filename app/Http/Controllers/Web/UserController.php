@@ -9,6 +9,20 @@ use Illuminate\Support\Facades\Hash;
 
 class UserController extends Controller
 {
+    public function resetPassword($id)
+    {
+        if (!auth()->user()?->hasRole('KepalaDivisi')) {
+            abort(403, 'Hanya Kepala Divisi yang dapat mereset password.');
+        }
+
+        $user = User::findOrFail($id);
+        $user->password = Hash::make('password123');
+        $user->must_change_password = true;
+        $user->save();
+
+        return back()->with('success', 'Password user ' . $user->username . ' berhasil direset menjadi "password123".');
+    }
+
     public function index()
     {
         if (!auth()->user()?->hasRole(['KepalaDivisi', 'AdminGudang'])) {
@@ -61,6 +75,7 @@ class UserController extends Controller
             'nama_lengkap' => $validated['nama_lengkap'] ?? null,
             'role' => $validated['role'],
             'is_active' => true,
+            'must_change_password' => true,
         ]);
 
         return redirect()
@@ -70,8 +85,9 @@ class UserController extends Controller
 
     public function edit(int $userId)
     {
-        if (!auth()->user()?->hasRole('KepalaDivisi')) {
-            abort(403, 'Hanya Kepala Divisi yang dapat mengelola user.');
+        // Kepala Divisi tidak boleh edit. Admin Gudang boleh.
+        if (!auth()->user()?->hasRole('AdminGudang')) {
+            abort(403, 'Hanya Admin Gudang yang dapat mengedit user.');
         }
         $user = User::findOrFail($userId);
 
@@ -80,8 +96,9 @@ class UserController extends Controller
 
     public function update(Request $request, int $userId)
     {
-        if (!auth()->user()?->hasRole('KepalaDivisi')) {
-            abort(403, 'Hanya Kepala Divisi yang dapat mengelola user.');
+        // Kepala Divisi tidak boleh edit. Admin Gudang boleh.
+        if (!auth()->user()?->hasRole('AdminGudang')) {
+            abort(403, 'Hanya Admin Gudang yang dapat mengedit user.');
         }
         $user = User::findOrFail($userId);
 

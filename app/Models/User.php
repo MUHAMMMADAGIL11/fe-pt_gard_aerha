@@ -49,7 +49,8 @@ class User extends Authenticatable implements JWTSubject
         'password',
         'nama_lengkap',
         'is_active',
-        'role'
+        'role',
+        'must_change_password',
     ];
 
     /**
@@ -71,6 +72,7 @@ class User extends Authenticatable implements JWTSubject
         return [
             // ⚠️ DIPERTAHANKAN SESUAI KODE ASLI KAMU
             'is_aktif' => 'boolean',
+            'must_change_password' => 'boolean',
         ];
     }
 

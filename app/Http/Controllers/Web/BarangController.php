@@ -28,6 +28,9 @@ class BarangController extends Controller
 
     public function create()
     {
+        if (auth()->user()->hasRole('PetugasOperasional')) {
+            abort(403, 'Anda tidak memiliki izin untuk menambah barang.');
+        }
         $categories = Kategori::orderBy('nama_kategori')->get();
 
         return view('pages.entities.barang.create', compact('categories'));
@@ -35,6 +38,9 @@ class BarangController extends Controller
 
     public function store(Request $request)
     {
+        if (auth()->user()->hasRole('PetugasOperasional')) {
+            abort(403, 'Anda tidak memiliki izin untuk menambah barang.');
+        }
         $validated = $request->validate([
             'id_kategori' => ['required', 'integer', 'exists:kategori,id_kategori'],
             'kode_barang' => ['required', 'string', 'max:50', 'unique:barang,kode_barang'],
@@ -52,6 +58,9 @@ class BarangController extends Controller
 
     public function edit(int $barangId)
     {
+        if (auth()->user()->hasRole('PetugasOperasional')) {
+            abort(403, 'Anda tidak memiliki izin untuk mengedit barang.');
+        }
         $barang = Barang::findOrFail($barangId);
         $categories = Kategori::orderBy('nama_kategori')->get();
 
@@ -60,6 +69,9 @@ class BarangController extends Controller
 
     public function update(Request $request, int $barangId)
     {
+        if (auth()->user()->hasRole('PetugasOperasional')) {
+            abort(403, 'Anda tidak memiliki izin untuk mengedit barang.');
+        }
         $barang = Barang::findOrFail($barangId);
 
         $validated = $request->validate([
@@ -75,6 +87,12 @@ class BarangController extends Controller
         return redirect()
             ->route('barang.index')
             ->with('success', 'Barang berhasil diperbarui.');
+    }
+
+    public function printLabel(int $barangId)
+    {
+        $barang = Barang::with('kategori')->findOrFail($barangId);
+        return view('pages.entities.barang.print-label', compact('barang'));
     }
 
     public function destroy(int $barangId)

@@ -56,9 +56,20 @@
                                     </span>
                                 </td>
                                 <td class="px-7 py-3.5 text-right space-x-2">
+                                    {{-- Kepala Divisi: Full Access (Edit, Reset, Delete). --}}
+                                    {{-- Admin Gudang: Create Only (Petugas), No Edit/Reset/Delete. --}}
+                                    
                                     @if(auth()->user()?->hasRole('KepalaDivisi'))
                                         <a href="{{ route('user.edit', $user->id_user) }}"
                                             class="inline-flex items-center rounded-md border border-blue-200/40 px-3 py-1 text-[12px] font-semibold text-blue-200 hover:bg-blue-200/10">Edit</a>
+                                    
+                                        <form action="{{ route('user.reset-password', $user->id_user) }}" method="POST" class="inline reset-form" data-name="{{ $user->username }}">
+                                            @csrf
+                                            <button type="submit" class="inline-flex items-center rounded-md border border-yellow-200/40 px-3 py-1 text-[12px] font-semibold text-yellow-200 hover:bg-yellow-200/10">
+                                                Reset
+                                            </button>
+                                        </form>
+
                                         @if($user->id_user !== auth()->user()->id_user)
                                             <button type="button" data-delete data-name="{{ $user->username }}"
                                                 data-action="{{ route('user.destroy', $user->id_user) }}"
@@ -83,58 +94,29 @@
             </div>
         </div>
     </div>
-
-    <div id="deleteModal" class="fixed inset-0 z-50 hidden">
-        <div class="absolute inset-0 bg-black/40 backdrop-blur-sm"></div>
-        <div class="relative max-w-md mx-auto mt-40 bg-white rounded-2xl shadow-2xl p-6 space-y-4">
-            <div class="space-y-1">
-                <p class="text-sm font-semibold text-rose-500 uppercase tracking-wide">Konfirmasi Hapus</p>
-                <h2 class="text-xl font-bold text-slate-900">Yakin ingin menghapus?</h2>
-                <p id="deleteModalText" class="text-sm text-slate-500">Data yang dihapus tidak dapat dikembalikan.</p>
-            </div>
-            <div class="flex flex-col sm:flex-row sm:justify-end gap-2">
-                <button id="cancelDelete"
-                    class="inline-flex justify-center rounded-lg border border-slate-200 px-4 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-50">Batal</button>
-                <form method="POST" id="deleteForm" data-loading="true">
-                    @csrf
-                    @method('DELETE')
-                    @include('components.button', [
-                        'label' => 'Hapus',
-                        'type' => 'submit',
-                        'variant' => 'danger',
-                    ])
-                </form>
-            </div>
-        </div>
-    </div>
 @endsection
 
 @push('scripts')
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            const modal = document.getElementById('deleteModal');
-            const modalText = document.getElementById('deleteModalText');
-            const deleteForm = document.getElementById('deleteForm');
-            const cancelButton = document.getElementById('cancelDelete');
-
-            const closeModal = () => modal.classList.add('hidden');
-            const openModal = () => modal.classList.remove('hidden');
-
-            document.querySelectorAll('[data-delete]').forEach((button) => {
-                button.addEventListener('click', () => {
-                    const name = button.dataset.name ?? 'user ini';
-                    const action = button.dataset.action;
-                    modalText.textContent = `Anda akan menghapus user "${name}". Tindakan ini tidak dapat dibatalkan.`;
-                    deleteForm.setAttribute('action', action);
-                    openModal();
+            // Reset Password Confirmation
+            document.querySelectorAll('.reset-form').forEach(form => {
+                form.addEventListener('submit', (e) => {
+                    e.preventDefault();
+                    const name = form.dataset.name;
+                    Swal.fire({
+                        title: 'Reset Password?',
+                        html: `Password untuk <b>${name}</b> akan direset menjadi <b>password123</b>.`,
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonText: 'Ya, Reset',
+                        cancelButtonText: 'Batal',
+                        confirmButtonColor: '#eab308',
+                        reverseButtons: true
+                    }).then((result) => {
+                        if (result.isConfirmed) form.submit();
+                    });
                 });
-            });
-
-            cancelButton?.addEventListener('click', () => closeModal());
-            modal?.addEventListener('click', (event) => {
-                if (event.target === modal) {
-                    closeModal();
-                }
             });
         });
     </script>

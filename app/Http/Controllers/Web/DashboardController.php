@@ -7,6 +7,7 @@ use App\Models\Barang;
 use App\Models\Kategori;
 use App\Models\PermintaanBarang;
 use App\Models\Transaksi;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 
 class DashboardController extends Controller
@@ -16,6 +17,7 @@ class DashboardController extends Controller
         $totalBarang = Barang::count();
         $kategoriCount = Kategori::count();
         $lowStockCount = Barang::whereColumn('stok', '<', 'stok_minimum')->count();
+        $lowStockItems = Barang::whereColumn('stok', '<', 'stok_minimum')->take(5)->get();
         $mauHabisCount = $lowStockCount;
         $totalStok = Barang::sum('stok');
         $permintaanPending = PermintaanBarang::where('status', 'Menunggu Persetujuan')->count();
@@ -30,6 +32,33 @@ class DashboardController extends Controller
             ->orderByDesc('tanggal')
             ->take(5)
             ->get();
+
+        // Data for Chart (Last 6 Months)
+        $chartData = [
+            'labels' => [],
+            'masuk' => [],
+            'keluar' => []
+        ];
+
+        for ($i = 5; $i >= 0; $i--) {
+            $date = Carbon::now()->subMonths($i);
+            $monthName = $date->format('M Y');
+            $chartData['labels'][] = $monthName;
+
+            $masuk = Transaksi::where('jenis_transaksi', 'MASUK')
+                ->whereYear('tanggal', $date->year)
+                ->whereMonth('tanggal', $date->month)
+                ->sum('jumlah');
+
+            $keluar = Transaksi::where('jenis_transaksi', 'KELUAR')
+                ->whereYear('tanggal', $date->year)
+                ->whereMonth('tanggal', $date->month)
+                ->sum('jumlah');
+
+            $chartData['masuk'][] = $masuk;
+            $chartData['keluar'][] = $keluar;
+        }
+
         $topBarangLaku = Transaksi::select('id_barang', DB::raw('SUM(jumlah) as total_keluar'))
             ->where('jenis_transaksi', 'KELUAR')
             ->with('barang')
@@ -42,13 +71,15 @@ class DashboardController extends Controller
             'totalBarang',
             'kategoriCount',
             'lowStockCount',
+            'lowStockItems',
             'mauHabisCount',
             'totalStok',
             'permintaanPending',
             'recentItems',
             'transaksiMasukTerbaru',
             'transaksiKeluarTerbaru',
-            'topBarangLaku'
+            'topBarangLaku',
+            'chartData'
         ));
     }
 }

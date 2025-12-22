@@ -21,11 +21,16 @@ Route::middleware('guest')->group(function () {
 });
 
 Route::middleware('auth')->group(function () {
+    Route::get('/change-password', [AuthController::class, 'showChangePasswordForm'])->name('password.change');
+    Route::post('/change-password', [AuthController::class, 'updatePassword'])->name('password.update');
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
+});
 
+Route::middleware(['auth', 'ensure.password.changed'])->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
     // Master Data - Barang
+    Route::get('barang/{barang}/print-label', [BarangWebController::class, 'printLabel'])->name('barang.print-label');
     Route::resource('barang', BarangWebController::class)
         ->except(['show'])
         ->parameters(['barang' => 'barang']);
@@ -60,8 +65,10 @@ Route::middleware('auth')->group(function () {
     // Laporan (Admin Gudang & Kepala Divisi)
     Route::get('laporan', [LaporanController::class, 'index'])->name('laporan.index');
     Route::get('laporan/export-pdf', [LaporanController::class, 'exportPdf'])->name('laporan.export-pdf');
+    Route::get('laporan/export-csv', [LaporanController::class, 'exportCsv'])->name('laporan.export-csv');
 
     // User Management (Kepala Divisi full, Admin hanya tambah Petugas)
+    Route::post('user/{user}/reset-password', [UserController::class, 'resetPassword'])->name('user.reset-password');
     Route::resource('user', UserController::class)
         ->parameters(['user' => 'user']);
 
