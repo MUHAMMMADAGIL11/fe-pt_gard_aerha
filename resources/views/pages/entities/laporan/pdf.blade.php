@@ -63,7 +63,7 @@
                 <tr>
                     <td>{{ \Carbon\Carbon::parse($item->tanggal)->format('d/m/Y') }}</td>
                     <td>{{ $item->jenis_transaksi }}</td>
-                    <td>{{ $item->barang->nama_barang }}</td>
+                    <td>{{ $item->barang->nama_barang ?? 'Barang Dihapus' }}</td>
                     <td>{{ $item->barang->kategori->nama_kategori ?? '-' }}</td>
                     <td>{{ $item->jenis_transaksi === 'MASUK' ? '+' : '-' }}{{ number_format($item->jumlah) }} pcs</td>
                     <td>{{ $item->user->username ?? '-' }}</td>

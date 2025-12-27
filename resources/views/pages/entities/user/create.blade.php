@@ -57,24 +57,34 @@
                     <div class="space-y-2">
                         <label for="role" class="block text-sm font-semibold text-white">Role <span class="text-rose-400">*</span></label>
                         <div class="relative select-with-icon">
+                            @php
+                                $actor = auth()->user();
+                                $allowedRoles = (isset($allowedRoles) && is_array($allowedRoles))
+                                    ? $allowedRoles
+                                    : ($actor && $actor->hasRole('KepalaDivisi')
+                                        ? ['AdminGudang','PetugasOperasional','KepalaDivisi']
+                                        : ['PetugasOperasional']);
+                                $isLocked = count($allowedRoles) === 1;
+                            @endphp
+
                             <select id="role" name="role"
-                                class="w-full rounded-xl border border-white/10 bg-[#152c3f] pl-4 pr-12 py-3 text-sm text-white appearance-none focus:border-[#B69364] focus:ring-2 focus:ring-[#B69364]/20"
-                                required>
+                                class="w-full rounded-xl border border-white/10 bg-[#152c3f] pl-4 pr-12 py-3 text-sm text-white appearance-none focus:border-[#B69364] focus:ring-2 focus:ring-[#B69364]/20 {{ $isLocked ? 'cursor-not-allowed opacity-75' : '' }}"
+                                required
+                                {{ $isLocked ? 'readonly' : '' }}
+                                {{-- Jika readonly tidak didukung select, kita gunakan event handler untuk mencegah perubahan atau hanya menampilkan satu opsi --}}
+                                @if($isLocked) onmousedown="(function(e){ e.preventDefault(); })(event, this)" @endif
+                                >
                                 <option value="">-- Pilih Role --</option>
-                                @php
-                                    $actor = auth()->user();
-                                    $allowedRoles = (isset($allowedRoles) && is_array($allowedRoles))
-                                        ? $allowedRoles
-                                        : ($actor && $actor->hasRole('KepalaDivisi')
-                                            ? ['AdminGudang','PetugasOperasional','KepalaDivisi']
-                                            : ['PetugasOperasional']);
-                                @endphp
                                 @foreach ($allowedRoles as $r)
-                                    <option value="{{ $r }}" {{ old('role') === $r ? 'selected' : '' }}>
+                                    <option value="{{ $r }}" {{ (old('role') === $r || $isLocked) ? 'selected' : '' }}>
                                         {{ $r === 'AdminGudang' ? 'Admin Gudang' : ($r === 'PetugasOperasional' ? 'Petugas Operasional' : 'Kepala Divisi') }}
                                     </option>
                                 @endforeach
                             </select>
+                            
+                            {{-- Jika locked, kita pastikan nilai terkirim (meskipun select readonly biasanya terkirim, disabled tidak) --}}
+                            {{-- Tapi select readonly tetap bisa diubah user pintar via inspect element jika tidak divalidasi di backend (sudah kita validasi di controller) --}}
+                            
                             <span class="pointer-events-none absolute inset-y-0 right-3 flex items-center">
                                 <svg class="h-4 w-4 text-slate-300" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
                                     <path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 10.94l3.71-3.71a.75.75 0 111.06 1.06l-4.24 4.24a.75.75 0 01-1.06 0L5.25 8.29a.75.75 0 01-.02-1.08z" clip-rule="evenodd" />

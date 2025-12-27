@@ -9,9 +9,26 @@ use Illuminate\Http\Request;
 
 class BarangController extends Controller
 {
+    public function scanPage(Request $request)
+    {
+        if ($code = $request->query('code')) {
+            $barang = Barang::where('kode_barang', $code)->first();
+            
+            if ($barang) {
+                return redirect()->route('barang.show', $barang->id_barang);
+            }
+            
+            return redirect()->route('scan.index')->with('error', 'Barang dengan kode "' . $code . '" tidak ditemukan.');
+        }
+
+        return view('pages.scan.index');
+    }
+
     public function index(Request $request)
     {
         $q = trim($request->get('q', ''));
+        $kategoriId = $request->get('kategori');
+
         $barang = Barang::with('kategori')
             ->when($q !== '', function($builder) use ($q) {
                 $builder->where(function($w) use ($q) {
@@ -19,11 +36,22 @@ class BarangController extends Controller
                       ->orWhere('kode_barang', 'like', "%$q%");
                 });
             })
+            ->when($kategoriId, function($builder) use ($kategoriId) {
+                $builder->where('id_kategori', $kategoriId);
+            })
             ->orderBy('nama_barang')
             ->paginate(10)
-            ->appends(['q' => $q]);
+            ->appends(['q' => $q, 'kategori' => $kategoriId]);
 
-        return view('pages.entities.barang.index', compact('barang', 'q'));
+        $categories = Kategori::orderBy('nama_kategori')->get();
+
+        return view('pages.entities.barang.index', compact('barang', 'q', 'categories'));
+    }
+
+    public function show(Barang $barang)
+    {
+        $barang->load('kategori');
+        return view('pages.entities.barang.show', compact('barang'));
     }
 
     public function create()

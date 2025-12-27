@@ -25,6 +25,10 @@ class TransaksiMasukController extends Controller
 
     public function create()
     {
+        if (!auth()->user()->hasRole(['AdminGudang', 'KepalaDivisi'])) {
+            abort(403, 'Anda tidak memiliki wewenang untuk menambahkan stok barang.');
+        }
+
         $barang = Barang::with('kategori')
             ->orderBy('nama_barang')
             ->get();

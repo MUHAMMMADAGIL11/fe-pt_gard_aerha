@@ -7,7 +7,7 @@
                 <h1 class="text-[26px] font-bold text-white mt-3">Manajemen Pengguna</h1>
                 <p class="text-[14px] text-slate-300 mt-1.5">Kelola akun pengguna sistem.</p>
             </div>
-            @if(auth()->user()?->hasRole(['KepalaDivisi', 'AdminGudang']))
+            @if(auth()->user()?->hasRole('KepalaDivisi'))
                 <a href="{{ route('user.create') }}"
                     class="inline-flex items-center justify-center gap-2 rounded-lg bg-[#B69364] px-6 py-2.5 text-[13px] font-semibold text-white shadow-md shadow-[#B69364]/40 hover:bg-[#a67f4f]">
                     + Tambah User
@@ -57,7 +57,7 @@
                                 </td>
                                 <td class="px-7 py-3.5 text-right space-x-2">
                                     {{-- Kepala Divisi: Full Access (Edit, Reset, Delete). --}}
-                                    {{-- Admin Gudang: Create Only (Petugas), No Edit/Reset/Delete. --}}
+                                    {{-- Admin Gudang: No Access to Actions (View Only). --}}
                                     
                                     @if(auth()->user()?->hasRole('KepalaDivisi'))
                                         <a href="{{ route('user.edit', $user->id_user) }}"

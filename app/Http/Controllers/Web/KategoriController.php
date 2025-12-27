@@ -68,9 +68,7 @@ class KategoriController extends Controller
         $kategori = Kategori::findOrFail($kategoriId);
 
         if ($kategori->barang()->count() > 0) {
-            return redirect()
-                ->route('kategori.index')
-                ->with('error', 'Kategori tidak dapat dihapus karena masih memiliki barang.');
+            return back()->with('error', 'Gagal menghapus! Kategori ini masih memiliki ' . $kategori->barang()->count() . ' barang. Kosongkan atau pindahkan barang terlebih dahulu.');
         }
 
         $kategori->delete();

@@ -25,12 +25,23 @@ class UserController extends Controller
 
     public function index()
     {
-        if (!auth()->user()?->hasRole(['KepalaDivisi', 'AdminGudang'])) {
+        $user = auth()->user();
+
+        if (!$user?->hasRole(['KepalaDivisi', 'AdminGudang'])) {
             abort(403, 'Hanya Kepala Divisi atau Admin Gudang yang dapat mengelola user.');
         }
-        $users = User::orderBy('role')
-            ->orderBy('username')
-            ->paginate(15);
+
+        $query = User::orderBy('role')->orderBy('username');
+
+        if ($user->hasRole('AdminGudang')) {
+            // Admin HANYA BOLEH Melihat: Akun admin itu sendiri, Akun Petugas Operasional
+            $query->where(function ($q) use ($user) {
+                $q->where('id_user', $user->id_user)
+                  ->orWhere('role', 'PetugasOperasional');
+            });
+        }
+
+        $users = $query->paginate(15);
 
         return view('pages.entities.user.index', compact('users'));
     }
@@ -38,24 +49,24 @@ class UserController extends Controller
     public function create()
     {
         $user = auth()->user();
-        if (!$user?->hasRole(['KepalaDivisi', 'AdminGudang'])) {
+        if (!$user?->hasRole('KepalaDivisi')) {
             abort(403, 'Anda tidak memiliki akses untuk menambah user.');
         }
-        $allowedRoles = $user->hasRole('KepalaDivisi')
-            ? ['AdminGudang','PetugasOperasional','KepalaDivisi']
-            : ['PetugasOperasional'];
+
+        $allowedRoles = ['AdminGudang', 'PetugasOperasional', 'KepalaDivisi'];
+        
         return view('pages.entities.user.create', compact('allowedRoles'));
     }
 
     public function store(Request $request)
     {
         $actor = auth()->user();
-        if (!$actor?->hasRole(['KepalaDivisi', 'AdminGudang'])) {
+        if (!$actor?->hasRole('KepalaDivisi')) {
             abort(403, 'Anda tidak memiliki akses untuk menambah user.');
         }
-        $allowedRoles = $actor->hasRole('KepalaDivisi')
-            ? ['AdminGudang','PetugasOperasional','KepalaDivisi']
-            : ['PetugasOperasional'];
+
+        $allowedRoles = ['AdminGudang', 'PetugasOperasional', 'KepalaDivisi'];
+        
         $validated = $request->validate([
             'username' => ['required', 'string', 'max:50', 'unique:users,username'],
             'password' => ['required', 'string', 'min:6'],
@@ -67,6 +78,7 @@ class UserController extends Controller
             'password.required' => 'Password wajib diisi.',
             'password.min' => 'Password minimal 6 karakter.',
             'role.required' => 'Role wajib dipilih.',
+            'role.in' => 'Role yang dipilih tidak valid untuk akses Anda.',
         ]);
 
         User::create([
@@ -85,20 +97,18 @@ class UserController extends Controller
 
     public function edit(int $userId)
     {
-        // Kepala Divisi tidak boleh edit. Admin Gudang boleh.
-        if (!auth()->user()?->hasRole('AdminGudang')) {
-            abort(403, 'Hanya Admin Gudang yang dapat mengedit user.');
+        if (!auth()->user()?->hasRole('KepalaDivisi')) {
+            abort(403, 'Hanya Kepala Divisi yang dapat mengedit user.');
         }
         $user = User::findOrFail($userId);
-
+        
         return view('pages.entities.user.edit', compact('user'));
     }
 
     public function update(Request $request, int $userId)
     {
-        // Kepala Divisi tidak boleh edit. Admin Gudang boleh.
-        if (!auth()->user()?->hasRole('AdminGudang')) {
-            abort(403, 'Hanya Admin Gudang yang dapat mengedit user.');
+        if (!auth()->user()?->hasRole('KepalaDivisi')) {
+            abort(403, 'Hanya Kepala Divisi yang dapat mengedit user.');
         }
         $user = User::findOrFail($userId);
 
@@ -134,7 +144,7 @@ class UserController extends Controller
     public function destroy(int $userId)
     {
         if (!auth()->user()?->hasRole('KepalaDivisi')) {
-            abort(403, 'Hanya Kepala Divisi yang dapat mengelola user.');
+            abort(403, 'Anda tidak memiliki akses untuk menghapus user.');
         }
         $user = User::findOrFail($userId);
 

@@ -194,6 +194,7 @@
                                     d="M21 21 16.65 16.65M19 11A8 8 0 1 1 3 11a8 8 0 0 1 16 0Z" />
                             </svg>
                         </button>
+
                         <button id="notifBtn" class="relative w-8 h-8 rounded-full bg-white border border-slate-200 flex items-center justify-center text-[#041B22] hover:bg-slate-50">
                             <svg class="w-4 h-4" fill="none" stroke="#041B22" stroke-width="2.4" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round"
@@ -435,8 +436,18 @@
                               <path fill-rule="evenodd" d="M9 3.5a5.5 5.5 0 100 11 5.5 5.5 0 000-11zM2 9a7 7 0 1112.452 4.391l3.328 3.329a.75.75 0 11-1.06 1.06l-3.329-3.328A7 7 0 012 9z" clip-rule="evenodd" />
                             </svg>
                             <input id="globalSearchInput" type="text" 
-                                class="h-12 w-full border-0 bg-transparent pl-11 pr-4 text-white placeholder-slate-400 focus:ring-0 sm:text-sm" 
+                                class="h-12 w-full border-0 bg-transparent pl-11 pr-12 text-white placeholder-slate-400 focus:ring-0 sm:text-sm" 
                                 placeholder="Cari menu, barang, atau fitur... (Tekan Ctrl+K)" role="combobox" aria-expanded="false" aria-controls="options">
+                            <a href="{{ route('scan.index') }}" class="absolute right-2 top-2.5 p-1.5 rounded-lg text-[#B69364] hover:text-[#d4af7a] hover:bg-[#B69364]/10 transition-all group" title="Scan QR Code">
+                                <svg class="h-6 w-6 transition-transform group-hover:scale-110" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M3 7V5a2 2 0 0 1 2-2h2" />
+                                    <path d="M17 3h2a2 2 0 0 1 2 2v2" />
+                                    <path d="M21 17v2a2 2 0 0 1-2 2h-2" />
+                                    <path d="M7 21H5a2 2 0 0 1-2-2v-2" />
+                                    <rect x="7" y="7" width="10" height="10" rx="1" />
+                                    <path d="M7 12h10" />
+                                </svg>
+                            </a>
                         </div>
                         <div class="border-t border-white/5 px-2 py-3">
                             <p class="text-xs text-slate-500 px-2 font-semibold uppercase tracking-wider mb-2">Akses Cepat</p>

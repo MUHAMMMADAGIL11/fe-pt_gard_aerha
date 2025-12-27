@@ -2,18 +2,41 @@
 
 @section('content')
     <div class="space-y-8 px-2 sm:px-4">
-        <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+        <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
             <div>
                 <h1 class="text-[26px] font-bold text-white mt-3">Daftar Barang</h1>
                 <p class="text-[14px] text-slate-300 mt-1.5">Kelola stok, kategori, dan detail barang dengan cepat.</p>
             </div>
-            @if(!auth()->user()->hasRole('PetugasOperasional'))
-            <a href="{{ route('barang.create') }}"
-                class="inline-flex items-center justify-center gap-2 rounded-lg bg-[#B69364] px-6 py-2.5 text-[13px] font-semibold text-white shadow-md shadow-[#B69364]/40 hover:bg-[#a67f4f]">
-                + Tambah Barang
-            </a>
-            @endif
+            <div class="flex flex-col sm:flex-row gap-3">
+                <form action="{{ route('barang.index') }}" method="GET" class="flex items-center gap-2">
+                    @if(request('q'))
+                        <input type="hidden" name="q" value="{{ request('q') }}">
+                    @endif
+                    <select name="kategori" onchange="this.form.submit()" 
+                        class="h-10 rounded-lg border border-white/10 bg-[#B69364] text-white text-sm px-3 focus:ring-blue-500 focus:border-blue-500">
+                        <option value="" class="bg-[#152c3f] text-white">Semua Kategori</option>
+                        @foreach($categories as $cat)
+                            <option value="{{ $cat->id_kategori }}" class="bg-[#152c3f] text-white" {{ request('kategori') == $cat->id_kategori ? 'selected' : '' }}>
+                                {{ $cat->nama_kategori }}
+                            </option>
+                        @endforeach
+                    </select>
+                </form>
+
+                @if(!auth()->user()->hasRole('PetugasOperasional'))
+                <a href="{{ route('barang.create') }}"
+                    class="inline-flex items-center justify-center gap-2 rounded-lg bg-[#B69364] px-6 py-2.5 text-[13px] font-semibold text-white shadow-md shadow-[#B69364]/40 hover:bg-[#a67f4f]">
+                    + Tambah Barang
+                </a>
+                @endif
+            </div>
         </div>
+
+        @if(session('error'))
+            <div class="rounded-lg bg-red-500/10 border border-red-500/20 p-4 text-red-200 text-sm">
+                {{ session('error') }}
+            </div>
+        @endif
 
         <div class="bg-[#0F2536] rounded-2xl shadow-[0_18px_45px_rgba(0,0,0,0.45)] border border-white/5">
             <div class="overflow-x-auto">

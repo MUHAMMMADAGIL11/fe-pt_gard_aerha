@@ -136,8 +136,8 @@
                                     </span>
                                 </td>
                                 <td class="px-7 py-3.5">
-                                    <p class="font-semibold text-white">{{ $item->barang->nama_barang }}</p>
-                                    <p class="text-[12px] text-slate-400 mt-0.5">Kode: {{ $item->barang->kode_barang }}</p>
+                                    <p class="font-semibold text-white">{{ $item->barang->nama_barang ?? 'Barang Dihapus' }}</p>
+                                    <p class="text-[12px] text-slate-400 mt-0.5">Kode: {{ $item->barang->kode_barang ?? '-' }}</p>
                                 </td>
                                 <td class="px-7 py-3.5 text-slate-300">{{ $item->barang->kategori->nama_kategori ?? '-' }}</td>
                                 <td class="px-7 py-3.5 text-center font-semibold text-white">

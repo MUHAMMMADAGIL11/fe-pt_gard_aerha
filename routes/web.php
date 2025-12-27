@@ -30,9 +30,9 @@ Route::middleware(['auth', 'ensure.password.changed'])->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
     // Master Data - Barang
+    Route::get('scan', [BarangWebController::class, 'scanPage'])->name('scan.index');
     Route::get('barang/{barang}/print-label', [BarangWebController::class, 'printLabel'])->name('barang.print-label');
     Route::resource('barang', BarangWebController::class)
-        ->except(['show'])
         ->parameters(['barang' => 'barang']);
 
     // Master Data - Kategori (Admin Gudang only)

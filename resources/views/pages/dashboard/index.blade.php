@@ -146,7 +146,7 @@
                         {{-- Top Selling Items --}}
                         <div class="bg-white rounded-[20px] border border-slate-200 shadow-sm overflow-hidden">
                             <div class="px-5 py-4 border-b border-slate-100">
-                                <h3 class="font-bold text-slate-800 text-sm">Barang Paling Laku</h3>
+                                <h3 class="font-bold text-slate-800 text-sm">Barang dengan Tingkat Pemakaian Tinggi</h3>
                             </div>
                             <div class="divide-y divide-slate-50">
                                 @forelse($topBarangLaku as $index => $item)
@@ -160,7 +160,7 @@
                                         </div>
                                         <div class="text-right">
                                             <p class="text-sm font-bold text-slate-800">{{ number_format($item->total_keluar) }}</p>
-                                            <p class="text-[10px] text-slate-400">Terjual</p>
+                                            <p class="text-[10px] text-slate-400">Digunakan</p>
                                         </div>
                                     </div>
                                 @empty

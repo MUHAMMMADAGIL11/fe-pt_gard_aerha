@@ -42,8 +42,8 @@
                             <tr class="hover:bg-white/5 transition">
                                 <td class="px-7 py-3.5 text-slate-300">{{ \Carbon\Carbon::parse($item->created_at ?? now())->format('d/m/Y') }}</td>
                                 <td class="px-7 py-3.5">
-                                    <p class="font-semibold text-white">{{ $item->barang->nama_barang }}</p>
-                                    <p class="text-[12px] text-slate-400 mt-0.5">Kode: {{ $item->barang->kode_barang }}</p>
+                                    <p class="font-semibold text-white">{{ $item->barang->nama_barang ?? 'Barang Dihapus' }}</p>
+                                    <p class="text-[12px] text-slate-400 mt-0.5">Kode: {{ $item->barang->kode_barang ?? '-' }}</p>
                                 </td>
                                 <td class="px-7 py-3.5 text-slate-300">{{ $item->user->username ?? '-' }}</td>
                                 <td class="px-7 py-3.5 text-center font-semibold text-white">{{ number_format($item->jumlah_diminta) }} pcs</td>

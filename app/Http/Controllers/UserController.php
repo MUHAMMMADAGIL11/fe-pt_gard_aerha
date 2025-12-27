@@ -146,8 +146,6 @@ class UserController extends Controller
             $allowedRoles = null;
             if ($user->hasRole('KepalaDivisi')) {
                 $allowedRoles = ['AdminGudang', 'PetugasOperasional', 'KepalaDivisi'];
-            } elseif ($user->hasRole('AdminGudang')) {
-                $allowedRoles = ['PetugasOperasional'];
             } else {
                 return response()->json([
                     'success' => false,

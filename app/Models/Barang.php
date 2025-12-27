@@ -3,9 +3,12 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Barang extends Model
 {
+    use SoftDeletes;
+
     protected $table = 'barang';
     protected $primaryKey = 'id_barang';
     public $timestamps = false;
@@ -25,7 +28,7 @@ class Barang extends Model
 
     public function kategori()
     {
-        return $this->belongsTo(Kategori::class, 'id_kategori', 'id_kategori');
+        return $this->belongsTo(Kategori::class, 'id_kategori', 'id_kategori')->withTrashed();
     }
 }
 
