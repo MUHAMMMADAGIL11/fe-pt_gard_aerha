@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('content')
-    <div class="space-y-8 px-2 sm:px-4">
+    <div class="space-y-8 px-4 sm:px-6 lg:px-8">
         <div>
             <a href="{{ route('user.index') }}" class="inline-flex items-center gap-2 text-sm text-slate-300 hover:text-white mb-4">
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
@@ -9,8 +9,8 @@
                 </svg>
                 Kembali ke Daftar User
             </a>
-            <h1 class="text-[26px] font-bold text-white mt-3">Tambah User Baru</h1>
-            <p class="text-[14px] text-slate-300 mt-1.5">Tambah pengguna baru ke sistem.</p>
+            <h1 class="text-2xl sm:text-[26px] font-bold text-white mt-3">Tambah User Baru</h1>
+            <p class="text-sm text-slate-300 mt-1.5">Tambah pengguna baru ke sistem.</p>
         </div>
 
         <style>

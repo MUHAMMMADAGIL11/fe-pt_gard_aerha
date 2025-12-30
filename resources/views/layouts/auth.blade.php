@@ -55,7 +55,7 @@
         </div>
 
         <div class="auth-card">
-            <div class="relative bg-white rounded-[24px] shadow-[0_20px_40px_rgba(0,0,0,0.08)] border border-white/70 px-10 py-10 space-y-6">
+            <div class="relative bg-white rounded-[24px] shadow-[0_20px_40px_rgba(0,0,0,0.08)] border border-white/70 px-6 sm:px-10 py-10 space-y-6">
                 @yield('content')
             </div>
         </div>

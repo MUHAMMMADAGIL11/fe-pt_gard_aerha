@@ -4,8 +4,8 @@
     <div class="space-y-8">
         <div class="text-center space-y-3">
             <img src="https://image2url.com/images/1763968652947-ca796092-4a28-4c78-9565-acca57c494b9.png" alt="Logo PT Garda Erha" class="mx-auto w-20 h-20 object-contain" style="background: transparent;">
-            <h1 class="text-[26px] font-semibold text-[#1A1A1A]">Ubah Password</h1>
-            <p class="text-[13px] text-slate-500">Demi keamanan, silakan ubah password Anda.</p>
+            <h1 class="text-2xl sm:text-[26px] font-semibold text-[#1A1A1A]">Ubah Password</h1>
+            <p class="text-sm text-slate-500">Demi keamanan, silakan ubah password Anda.</p>
         </div>
 
         @if ($errors->any())

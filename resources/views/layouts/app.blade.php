@@ -184,10 +184,10 @@
                             </svg>
                         </button>
                         <div class="flex items-center">
-                            <h1 class="text-lg font-semibold text-[#041B22]">Sistem Manajemen Gudang</h1>
+                            <h1 class="text-sm sm:text-lg font-semibold text-[#041B22] truncate max-w-[200px] sm:max-w-none">Sistem Manajemen Gudang</h1>
                         </div>
                     </div>
-                    <div class="flex items-center gap-3 relative">
+                    <div class="flex items-center gap-2 sm:gap-3 relative">
                         <button id="searchBtn" class="w-8 h-8 rounded-full bg-white border border-slate-200 flex items-center justify-center text-[#041B22] hover:bg-slate-50">
                             <svg class="w-4 h-4" fill="none" stroke="#041B22" stroke-width="2.4" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round"
@@ -204,7 +204,7 @@
                                 <span class="absolute -top-1 -right-1 inline-flex items-center justify-center w-4 h-4 text-[10px] rounded-full bg-rose-500 text-white">{{ $notifCount }}</span>
                             @endif
                         </button>
-                        <div id="notifDropdown" class="hidden absolute right-44 top-12 z-50 w-96 bg-[#F3F8FF] rounded-2xl shadow-[0_18px_35px_rgba(0,0,0,0.15)] border border-[#D7E7FF]">
+                        <div id="notifDropdown" class="hidden absolute right-0 sm:right-44 top-12 z-50 w-80 sm:w-96 bg-[#F3F8FF] rounded-2xl shadow-[0_18px_35px_rgba(0,0,0,0.15)] border border-[#D7E7FF]">
                             <div class="px-4 py-3 border-b border-[#D7E7FF] bg-[#E7F1FF] rounded-t-2xl flex items-center justify-between">
                                 <p class="text-sm font-semibold text-[#0B2E4F]">Notifikasi</p>
                                 <button id="markAllReadBtn" class="inline-flex items-center gap-1 rounded-md border border-[#D7E7FF] px-2.5 py-1 text-xs font-semibold text-[#0B2E4F] hover:bg-[#ECF4FF]">
@@ -235,11 +235,11 @@
                             </div>
                         </div>
                         @auth
-                            <div class="flex items-center gap-4 rounded-2xl border border-slate-200 bg-white px-3.5 py-1.5">
-                                <div class="w-9 h-9 rounded-full bg-[#B69364] text-white flex items-center justify-center font-semibold uppercase ring-2 ring-[#041B22]/60">
+                            <div class="flex items-center gap-2 sm:gap-4 rounded-full sm:rounded-2xl border-0 sm:border border-slate-200 bg-transparent sm:bg-white p-0 sm:px-3.5 sm:py-1.5">
+                                <div class="w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-[#B69364] text-white flex items-center justify-center font-semibold uppercase ring-2 ring-[#041B22]/60">
                                     {{ \Illuminate\Support\Str::substr(auth()->user()->username ?? 'AG', 0, 2) }}
                                 </div>
-                                <div class="text-sm">
+                                <div class="text-sm hidden sm:block">
                                     <p class="font-semibold text-[#041B22]">{{ auth()->user()->nama_lengkap ?? auth()->user()->username ?? 'User' }}</p>
                                     @php
                                         $uname = strtolower(auth()->user()->username ?? '');
@@ -269,7 +269,7 @@
                                     <span class="inline-flex items-center rounded-full px-2.5 py-0.5 text-[11px] font-semibold {{ $roleClass }}">{{ $roleLabel }}</span>
                                 </div>
                                 <button type="button" id="logoutBtn"
-                                    class="inline-flex items-center rounded-md border border-slate-200 px-3 py-1 text-xs font-semibold text-[#041B22] hover:bg-slate-50">Logout</button>
+                                    class="hidden sm:inline-flex items-center rounded-md border border-slate-200 px-3 py-1 text-xs font-semibold text-[#041B22] hover:bg-slate-50">Logout</button>
                                 <form id="logoutForm" action="{{ route('logout') }}" method="POST" data-loading="true" class="hidden">
                                     @csrf
                                 </form>

@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('content')
-    <div class="space-y-8 px-2 sm:px-4">
+    <div class="space-y-8 px-4 sm:px-6 lg:px-8">
         <div>
             <a href="{{ route('kategori.index') }}" class="inline-flex items-center gap-2 text-sm text-slate-300 hover:text-white mb-4">
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
@@ -9,8 +9,8 @@
                 </svg>
                 Kembali ke Daftar Kategori
             </a>
-            <h1 class="text-[26px] font-bold text-white mt-3">Tambah Kategori Baru</h1>
-            <p class="text-[14px] text-slate-300 mt-1.5">Tambah kategori baru untuk mengelompokkan barang.</p>
+            <h1 class="text-2xl sm:text-[26px] font-bold text-white mt-3">Tambah Kategori Baru</h1>
+            <p class="text-sm text-slate-300 mt-1.5">Tambah kategori baru untuk mengelompokkan barang.</p>
         </div>
 
         <div class="bg-[#0F2536] rounded-2xl shadow-[0_18px_45px_rgba(0,0,0,0.45)] border border-white/5 p-6 sm:p-8">

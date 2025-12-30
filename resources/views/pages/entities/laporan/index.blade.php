@@ -1,10 +1,10 @@
 @extends('layouts.app')
 
 @section('content')
-    <div class="space-y-8 px-2 sm:px-4">
+    <div class="space-y-8 px-4 sm:px-6 lg:px-8">
         <div>
-            <h1 class="text-[26px] font-bold text-white mt-3">Laporan Inventori</h1>
-            <p class="text-[14px] text-slate-300 mt-1.5">Lihat dan cetak laporan transaksi inventori.</p>
+            <h1 class="text-2xl sm:text-[26px] font-bold text-white mt-3">Laporan Inventori</h1>
+            <p class="text-sm text-slate-300 mt-1.5">Lihat dan cetak laporan transaksi inventori.</p>
         </div>
 
         <style>
@@ -13,7 +13,7 @@
         </style>
         <div class="bg-[#0F2536] rounded-2xl shadow-[0_18px_45px_rgba(0,0,0,0.45)] border border-white/5 p-6 sm:p-8">
             <form method="GET" action="{{ route('laporan.index') }}" class="space-y-6 mb-6">
-                <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                     <div class="space-y-2">
                         <label for="tanggal_mulai" class="block text-sm font-semibold text-white">Tanggal Mulai</label>
                         <div class="relative">
@@ -87,13 +87,13 @@
                 </div>
             </div>
 
-            <div class="flex justify-end gap-3 mb-4">
+            <div class="flex flex-col sm:flex-row justify-end gap-3 mb-4">
                 <form method="GET" action="{{ route('laporan.export-csv') }}" class="inline">
                     <input type="hidden" name="tanggal_mulai" value="{{ $tanggalMulai }}">
                     <input type="hidden" name="tanggal_akhir" value="{{ $tanggalAkhir }}">
                     <input type="hidden" name="jenis" value="{{ $jenis }}">
                     <button type="submit"
-                        class="inline-flex items-center gap-2 rounded-xl bg-emerald-600 px-6 py-2.5 text-[13px] font-semibold text-white shadow-md hover:bg-emerald-700 transition">
+                        class="inline-flex items-center justify-center w-full sm:w-auto gap-2 rounded-xl bg-emerald-600 px-6 py-2.5 text-[13px] font-semibold text-white shadow-md hover:bg-emerald-700 transition">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                         </svg>
@@ -105,7 +105,7 @@
                     <input type="hidden" name="tanggal_akhir" value="{{ $tanggalAkhir }}">
                     <input type="hidden" name="jenis" value="{{ $jenis }}">
                     <button type="submit"
-                        class="inline-flex items-center gap-2 rounded-xl bg-rose-600 px-6 py-2.5 text-[13px] font-semibold text-white shadow-md hover:bg-rose-700">
+                        class="inline-flex items-center justify-center w-full sm:w-auto gap-2 rounded-xl bg-rose-600 px-6 py-2.5 text-[13px] font-semibold text-white shadow-md hover:bg-rose-700">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
                         </svg>
@@ -115,35 +115,35 @@
             </div>
 
             <div class="overflow-x-auto">
-                <table class="min-w-full divide-y divide-white/5 text-[14px] text-slate-100">
+                <table class="min-w-full divide-y divide-white/5 text-[14px] text-slate-100 whitespace-nowrap">
                     <thead class="bg-[#152c3f] text-left text-slate-300 text-[12px] uppercase tracking-wide">
                         <tr>
-                            <th class="px-7 py-4 font-semibold">Tanggal</th>
-                            <th class="px-7 py-4 font-semibold">Jenis</th>
-                            <th class="px-7 py-4 font-semibold">Nama Barang</th>
-                            <th class="px-7 py-4 font-semibold">Kategori</th>
-                            <th class="px-7 py-4 font-semibold text-center">Jumlah</th>
-                            <th class="px-7 py-4 font-semibold">Admin</th>
+                            <th class="px-4 py-3 md:px-7 md:py-4 font-semibold">Tanggal</th>
+                            <th class="px-4 py-3 md:px-7 md:py-4 font-semibold">Jenis</th>
+                            <th class="px-4 py-3 md:px-7 md:py-4 font-semibold">Nama Barang</th>
+                            <th class="px-4 py-3 md:px-7 md:py-4 font-semibold hidden md:table-cell">Kategori</th>
+                            <th class="px-4 py-3 md:px-7 md:py-4 font-semibold text-center">Jumlah</th>
+                            <th class="px-4 py-3 md:px-7 md:py-4 font-semibold hidden lg:table-cell">Admin</th>
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-white/5 text-slate-100">
                         @forelse ($transaksi as $item)
                             <tr class="hover:bg-white/5 transition">
-                                <td class="px-7 py-3.5 text-slate-300">{{ \Carbon\Carbon::parse($item->tanggal)->format('d/m/Y') }}</td>
-                                <td class="px-7 py-3.5">
+                                <td class="px-4 py-3 md:px-7 md:py-3.5 text-slate-300">{{ \Carbon\Carbon::parse($item->tanggal)->format('d/m/Y') }}</td>
+                                <td class="px-4 py-3 md:px-7 md:py-3.5">
                                     <span class="px-3 py-1 text-[12px] font-semibold rounded-full {{ $item->jenis_transaksi === 'MASUK' ? 'bg-emerald-100/80 text-emerald-700' : 'bg-rose-100/80 text-rose-700' }}">
                                         {{ $item->jenis_transaksi }}
                                     </span>
                                 </td>
-                                <td class="px-7 py-3.5">
+                                <td class="px-4 py-3 md:px-7 md:py-3.5">
                                     <p class="font-semibold text-white">{{ $item->barang->nama_barang ?? 'Barang Dihapus' }}</p>
                                     <p class="text-[12px] text-slate-400 mt-0.5">Kode: {{ $item->barang->kode_barang ?? '-' }}</p>
                                 </td>
-                                <td class="px-7 py-3.5 text-slate-300">{{ $item->barang->kategori->nama_kategori ?? '-' }}</td>
-                                <td class="px-7 py-3.5 text-center font-semibold text-white">
+                                <td class="px-4 py-3 md:px-7 md:py-3.5 text-slate-300 hidden md:table-cell">{{ $item->barang->kategori->nama_kategori ?? '-' }}</td>
+                                <td class="px-4 py-3 md:px-7 md:py-3.5 text-center font-semibold text-white">
                                     {{ $item->jenis_transaksi === 'MASUK' ? '+' : '-' }}{{ number_format($item->jumlah) }} pcs
                                 </td>
-                                <td class="px-7 py-3.5 text-slate-300">{{ $item->user->username ?? '-' }}</td>
+                                <td class="px-4 py-3 md:px-7 md:py-3.5 text-slate-300 hidden lg:table-cell">{{ $item->user->username ?? '-' }}</td>
                             </tr>
                         @empty
                             <tr>

@@ -10,12 +10,17 @@
             #stok_minimum::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
             .select-with-icon select { -webkit-appearance: none; -moz-appearance: none; appearance: none; background-image: none; }
         </style>
-        <div class="flex items-center justify-between">
+        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <div>
-                <h1 class="text-2xl font-bold text-white">Ubah Barang</h1>
-                <p class="text-sm text-slate-300">Perbarui informasi barang sesuai kebutuhan.</p>
+                <h1 class="text-2xl sm:text-[26px] font-bold text-white">Ubah Barang</h1>
+                <p class="text-sm text-slate-300 mt-1">Perbarui informasi barang sesuai kebutuhan.</p>
             </div>
-            <a href="{{ route('barang.index') }}" class="text-sm font-semibold text-slate-300 hover:text-white">&larr; Kembali</a>
+            <a href="{{ route('barang.index') }}" class="inline-flex items-center gap-2 text-sm font-semibold text-slate-300 hover:text-white" aria-label="Kembali">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
+                </svg>
+                Kembali
+            </a>
         </div>
 
         <div class="bg-[#0F2536] rounded-2xl shadow-[0_18px_45px_rgba(0,0,0,0.45)] border border-white/5 p-6 sm:p-8">

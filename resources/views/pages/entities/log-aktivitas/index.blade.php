@@ -1,18 +1,18 @@
 @extends('layouts.app')
 
 @section('content')
-    <div class="space-y-8 px-2 sm:px-4">
+    <div class="space-y-8 px-4 sm:px-6 lg:px-8">
         <style>
             input.custom-date[type="date"]::-webkit-calendar-picker-indicator { opacity: 0; }
         </style>
         <div>
-            <h1 class="text-[26px] font-bold text-white mt-3">Log Aktivitas</h1>
-            <p class="text-[14px] text-slate-300 mt-1.5">Lihat semua aktivitas yang dilakukan pengguna dalam sistem.</p>
+            <h1 class="text-2xl sm:text-[26px] font-bold text-white mt-3">Log Aktivitas</h1>
+            <p class="text-sm text-slate-300 mt-1.5">Lihat semua aktivitas yang dilakukan pengguna dalam sistem.</p>
         </div>
 
         <div class="bg-[#0F2536] rounded-2xl shadow-[0_18px_45px_rgba(0,0,0,0.45)] border border-white/5 p-6 sm:p-8">
             <form method="GET" action="{{ route('log-aktivitas.index') }}" class="space-y-6 mb-6">
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                     <div class="space-y-2">
                         <label for="tanggal_mulai" class="block text-sm font-semibold text-white">Tanggal Mulai</label>
                         <div class="relative">
@@ -59,27 +59,27 @@
             </form>
 
             <div class="overflow-x-auto">
-                <table class="min-w-full divide-y divide-white/5 text-[14px] text-slate-100">
+                <table class="min-w-full divide-y divide-white/5 text-[14px] text-slate-100 whitespace-nowrap">
                     <thead class="bg-[#152c3f] text-left text-slate-300 text-[12px] uppercase tracking-wide">
                         <tr>
-                            <th class="px-7 py-4 font-semibold">Tanggal</th>
-                            <th class="px-7 py-4 font-semibold">User</th>
-                            <th class="px-7 py-4 font-semibold">Aktivitas</th>
-                            <th class="px-7 py-4 font-semibold">Detail</th>
+                            <th class="px-4 py-3 md:px-7 md:py-4 font-semibold">Tanggal</th>
+                            <th class="px-4 py-3 md:px-7 md:py-4 font-semibold">User</th>
+                            <th class="px-4 py-3 md:px-7 md:py-4 font-semibold">Aktivitas</th>
+                            <th class="px-4 py-3 md:px-7 md:py-4 font-semibold hidden md:table-cell">Detail</th>
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-white/5 text-slate-100">
                         @forelse ($logs as $log)
                             <tr class="hover:bg-white/5 transition">
-                                <td class="px-7 py-3.5 text-slate-300">
+                                <td class="px-4 py-3 md:px-7 md:py-3.5 text-slate-300">
                                     {{ \Carbon\Carbon::parse($log->timestamp)->format('d/m/Y') }}
                                 </td>
-                                <td class="px-7 py-3.5">
+                                <td class="px-4 py-3 md:px-7 md:py-3.5">
                                     <p class="font-semibold text-white">{{ $log->user->username ?? '-' }}</p>
                                     <p class="text-[12px] text-slate-400 mt-0.5">{{ $log->user->nama_lengkap ?? '-' }}</p>
                                 </td>
-                                <td class="px-7 py-3.5 text-slate-300">{{ $log->aktivitas ?? '-' }}</td>
-                                <td class="px-7 py-3.5 text-slate-300">{{ $log->detail ?? '-' }}</td>
+                                <td class="px-4 py-3 md:px-7 md:py-3.5 text-slate-300">{{ $log->aktivitas ?? '-' }}</td>
+                                <td class="px-4 py-3 md:px-7 md:py-3.5 text-slate-300 hidden md:table-cell">{{ $log->detail ?? '-' }}</td>
                             </tr>
                         @empty
                             <tr>

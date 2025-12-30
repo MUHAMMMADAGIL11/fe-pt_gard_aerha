@@ -15,7 +15,7 @@
         $backgroundImage = "linear-gradient(120deg, rgba(4,27,34,0.9) 0%, rgba(4,27,34,0.75) 40%, rgba(182,147,102,0.55) 75%), url('https://images.unsplash.com/photo-1588423771073-b8903fbb85b5?auto=format&fit=crop&w=1800&q=80')";
     @endphp
 
-    <div class="space-y-8">
+    <div class="space-y-8 px-4 sm:px-6 lg:px-8">
                 <div class="text-center text-white space-y-2">
                     <p class="text-xs uppercase tracking-[0.5em] text-white/70">PT. Garda Erha</p>
                     <h1 class="text-2xl sm:text-3xl font-semibold">Dashboard Operasional Gudang</h1>
@@ -41,7 +41,7 @@
                                     <p class="text-sm text-slate-500">Tren barang masuk vs barang keluar (6 Bulan Terakhir)</p>
                                 </div>
                             </div>
-                            <div class="relative h-[320px] w-full">
+                            <div class="relative h-[250px] sm:h-[320px] w-full">
                                 <canvas id="transactionChart"></canvas>
                             </div>
                         </div>
