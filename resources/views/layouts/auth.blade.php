@@ -32,8 +32,22 @@
         .auth-card textarea:-webkit-autofill,
         .auth-card select:-webkit-autofill { -webkit-box-shadow: 0 0 0px 1000px #ffffff inset; -webkit-text-fill-color: #1A1A1A; }
         @media (max-width: 768px) {
-            .toggle-left, .dark-panel, .left-overlay, .toggle-right { display: none; }
-            .auth-card { position: relative; right: auto; top: auto; transform: none; margin: 0 auto; }
+            .toggle-left, .dark-panel, .left-overlay, .toggle-right { display: none !important; }
+            .auth-screen {
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                align-items: center;
+                padding: 1.5rem;
+            }
+            .auth-card { 
+                position: relative !important; 
+                inset: auto !important;
+                transform: none !important; 
+                margin: 0 !important; 
+                width: 100% !important;
+                max-width: 400px !important;
+            }
         }
     </style>
 </head>
