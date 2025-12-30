@@ -9,7 +9,6 @@
                 </svg>
                 Kembali ke Daftar User
             </a>
-            <p class="text-[11px] uppercase tracking-[0.35em] text-slate-400 font-semibold">Manajemen</p>
             <h1 class="text-[26px] font-bold text-white mt-3">Tambah User Baru</h1>
             <p class="text-[14px] text-slate-300 mt-1.5">Tambah pengguna baru ke sistem.</p>
         </div>
@@ -111,4 +110,3 @@
         </div>
     </div>
 @endsection
-

@@ -23,7 +23,7 @@
                     </select>
                 </form>
 
-                @if(!auth()->user()->hasRole('PetugasOperasional'))
+                @if(auth()->user()->hasRole('AdminGudang'))
                 <a href="{{ route('barang.create') }}"
                     class="inline-flex items-center justify-center gap-2 rounded-lg bg-[#B69364] px-6 py-2.5 text-[13px] font-semibold text-white shadow-md shadow-[#B69364]/40 hover:bg-[#a67f4f]">
                     + Tambah Barang
@@ -70,11 +70,11 @@
                                         class="inline-flex items-center rounded-md border border-slate-600/40 px-3 py-1 text-[12px] font-semibold text-slate-300 hover:bg-white/10 hover:text-white transition" title="Cetak Label QR">
                                         <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v1m6 11h2m-6 0h-2v4h2v-4zm-6 0H6.414a1 1 0 00-.707.293L4.293 16.707A1 1 0 005 17h3m10-13a2 2 0 00-2-2H8a2 2 0 00-2 2v2h12V4z" /></svg>
                                     </a>
-                                    @if(!auth()->user()->hasRole('PetugasOperasional'))
+                                    @if(auth()->user()->hasRole('AdminGudang'))
                                     <a href="{{ route('barang.edit', $item->id_barang) }}"
                                         class="inline-flex items-center rounded-md border border-blue-200/40 px-3 py-1 text-[12px] font-semibold text-blue-200 hover:bg-blue-200/10">Edit</a>
                                     @endif
-                                    @if(auth()->user()->hasRole(['AdminGudang', 'KepalaDivisi']))
+                                    @if(auth()->user()->hasRole('AdminGudang'))
                                         <button type="button" data-delete data-name="{{ $item->nama_barang }}"
                                             data-action="{{ route('barang.destroy', $item->id_barang) }}"
                                             class="inline-flex items-center rounded-md border border-rose-200/40 px-3 py-1 text-[12px] font-semibold text-rose-200 hover:bg-rose-200/10">

@@ -56,8 +56,8 @@ class BarangController extends Controller
 
     public function create()
     {
-        if (auth()->user()->hasRole('PetugasOperasional')) {
-            abort(403, 'Anda tidak memiliki izin untuk menambah barang.');
+        if (!auth()->user()->hasRole('AdminGudang')) {
+            abort(403, 'Hanya Admin Gudang yang dapat menambah barang.');
         }
         $categories = Kategori::orderBy('nama_kategori')->get();
 
@@ -66,8 +66,8 @@ class BarangController extends Controller
 
     public function store(Request $request)
     {
-        if (auth()->user()->hasRole('PetugasOperasional')) {
-            abort(403, 'Anda tidak memiliki izin untuk menambah barang.');
+        if (!auth()->user()->hasRole('AdminGudang')) {
+            abort(403, 'Hanya Admin Gudang yang dapat menambah barang.');
         }
         $validated = $request->validate([
             'id_kategori' => ['required', 'integer', 'exists:kategori,id_kategori'],
@@ -86,8 +86,8 @@ class BarangController extends Controller
 
     public function edit(int $barangId)
     {
-        if (auth()->user()->hasRole('PetugasOperasional')) {
-            abort(403, 'Anda tidak memiliki izin untuk mengedit barang.');
+        if (!auth()->user()->hasRole('AdminGudang')) {
+            abort(403, 'Hanya Admin Gudang yang dapat mengedit barang.');
         }
         $barang = Barang::findOrFail($barangId);
         $categories = Kategori::orderBy('nama_kategori')->get();
@@ -97,8 +97,8 @@ class BarangController extends Controller
 
     public function update(Request $request, int $barangId)
     {
-        if (auth()->user()->hasRole('PetugasOperasional')) {
-            abort(403, 'Anda tidak memiliki izin untuk mengedit barang.');
+        if (!auth()->user()->hasRole('AdminGudang')) {
+            abort(403, 'Hanya Admin Gudang yang dapat mengedit barang.');
         }
         $barang = Barang::findOrFail($barangId);
 
@@ -126,10 +126,10 @@ class BarangController extends Controller
     public function destroy(int $barangId)
     {
         $user = auth()->user();
-        if (!$user || !$user->hasRole(['AdminGudang', 'KepalaDivisi'])) {
+        if (!$user || !$user->hasRole('AdminGudang')) {
             return redirect()
                 ->route('barang.index')
-                ->with('error', 'Anda tidak memiliki izin untuk menghapus barang.');
+                ->with('error', 'Hanya Admin Gudang yang dapat menghapus barang.');
         }
 
         $barang = Barang::findOrFail($barangId);
@@ -140,4 +140,3 @@ class BarangController extends Controller
             ->with('success', 'Barang berhasil dihapus.');
     }
 }
-
