@@ -39,7 +39,61 @@
         @endif
 
         <div class="bg-[#0F2536] rounded-2xl shadow-[0_18px_45px_rgba(0,0,0,0.45)] border border-white/5">
-            <div class="overflow-x-auto">
+            <!-- Mobile Card View -->
+            <div class="grid grid-cols-1 gap-4 p-4 md:hidden">
+                @forelse ($barang as $item)
+                    <div class="bg-[#152c3f] rounded-xl p-4 border border-white/5 shadow-sm space-y-4">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <span class="inline-block px-2 py-0.5 rounded text-[10px] font-semibold bg-white/10 text-slate-300 mb-1">
+                                    {{ $item->kode_barang }}
+                                </span>
+                                <h3 class="text-lg font-bold text-white leading-tight">{{ $item->nama_barang }}</h3>
+                                <p class="text-xs text-slate-400 mt-1">Min. Stok: {{ $item->stok_minimum }}</p>
+                            </div>
+                            <div class="text-right">
+                                <span class="px-3 py-1 text-xs font-bold rounded-full {{ $item->stok < $item->stok_minimum ? 'bg-rose-500/20 text-rose-300' : 'bg-emerald-500/20 text-emerald-300' }}">
+                                    {{ $item->stok }} Unit
+                                </span>
+                            </div>
+                        </div>
+
+                        <div class="flex items-center justify-between text-sm pt-3 border-t border-white/5">
+                            <span class="text-slate-400 text-xs">{{ $item->kategori->nama_kategori ?? '-' }}</span>
+                            <div class="flex items-center gap-2">
+                                <a href="{{ route('barang.print-label', $item->id_barang) }}" target="_blank"
+                                    class="p-2 rounded-lg bg-white/5 text-slate-300 hover:bg-white/10 transition" title="Cetak Label">
+                                    <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v1m6 11h2m-6 0h-2v4h2v-4zm-6 0H6.414a1 1 0 00-.707.293L4.293 16.707A1 1 0 005 17h3m10-13a2 2 0 00-2-2H8a2 2 0 00-2 2v2h12V4z" /></svg>
+                                </a>
+                                @if(auth()->user()->hasRole('AdminGudang'))
+                                    <a href="{{ route('barang.edit', $item->id_barang) }}"
+                                        class="p-2 rounded-lg bg-blue-500/10 text-blue-300 hover:bg-blue-500/20 transition">
+                                        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" /></svg>
+                                    </a>
+                                    <button type="button" data-delete data-name="{{ $item->nama_barang }}"
+                                        data-action="{{ route('barang.destroy', $item->id_barang) }}"
+                                        class="p-2 rounded-lg bg-rose-500/10 text-rose-300 hover:bg-rose-500/20 transition">
+                                        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
+                                    </button>
+                                @endif
+                            </div>
+                        </div>
+                    </div>
+                @empty
+                    <div class="text-center py-10">
+                        <div class="inline-flex justify-center items-center w-16 h-16 rounded-full bg-white/5 mb-4">
+                            <svg class="w-8 h-8 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4" />
+                            </svg>
+                        </div>
+                        <h3 class="text-white font-medium mb-1">Belum ada barang</h3>
+                        <p class="text-slate-400 text-sm">Silakan tambahkan barang baru.</p>
+                    </div>
+                @endforelse
+            </div>
+
+            <!-- Desktop Table View -->
+            <div class="hidden md:block overflow-x-auto">
                 <table class="min-w-full divide-y divide-white/5 text-[14px] text-slate-100 whitespace-nowrap">
                     <thead class="bg-[#152c3f] text-left text-slate-300 text-[12px] uppercase tracking-wide">
                         <tr>

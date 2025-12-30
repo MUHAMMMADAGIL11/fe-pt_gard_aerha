@@ -17,7 +17,7 @@
 
     <div class="flex flex-col gap-6 items-center">
         <!-- Label Container -->
-        <div id="label-area" class="bg-white w-[400px] h-[220px] border-2 border-slate-800 rounded-xl p-5 relative flex items-center justify-between shadow-2xl overflow-hidden">
+        <div id="label-area" class="bg-white w-full max-w-[400px] h-[220px] border-2 border-slate-800 rounded-xl p-5 relative flex items-center justify-between shadow-2xl overflow-hidden shrink-0">
             <!-- Decorative Background -->
             <div class="absolute top-0 right-0 w-32 h-32 bg-[#B69364]/10 rounded-bl-full -mr-12 -mt-12 z-0"></div>
             <div class="absolute bottom-0 left-0 w-20 h-20 bg-slate-100 rounded-tr-full -ml-10 -mb-10 z-0"></div>

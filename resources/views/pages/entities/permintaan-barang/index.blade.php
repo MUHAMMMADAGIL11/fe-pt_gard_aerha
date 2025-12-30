@@ -22,7 +22,78 @@
         </div>
 
         <div class="bg-[#0F2536] rounded-2xl shadow-[0_18px_45px_rgba(0,0,0,0.45)] border border-white/5">
-            <div class="overflow-x-auto">
+            <!-- Mobile Card View -->
+            <div class="grid grid-cols-1 gap-4 p-4 md:hidden">
+                @forelse ($permintaan as $item)
+                    <div class="bg-[#152c3f] rounded-xl p-4 border border-white/5 shadow-sm space-y-4">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <span class="text-xs text-slate-400 block mb-0.5">{{ \Carbon\Carbon::parse($item->created_at ?? now())->format('d/m/Y') }}</span>
+                                <h3 class="text-lg font-bold text-white leading-tight">{{ $item->barang->nama_barang ?? 'Barang Dihapus' }}</h3>
+                                <p class="text-xs text-slate-400 mt-1">Kode: {{ $item->barang->kode_barang ?? '-' }}</p>
+                            </div>
+                            <div class="text-right">
+                                <span class="block text-sm font-bold text-white">{{ number_format($item->jumlah_diminta) }} pcs</span>
+                            </div>
+                        </div>
+
+                        <div class="flex items-center justify-between text-sm">
+                            <div class="flex items-center gap-2">
+                                <span class="text-slate-400 text-xs">Oleh: {{ $item->user->username ?? '-' }}</span>
+                            </div>
+                            @php
+                                $statusStyles = [
+                                    'Menunggu Persetujuan' => 'bg-amber-500/20 text-amber-300',
+                                    'Disetujui' => 'bg-emerald-500/20 text-emerald-300',
+                                    'Ditolak' => 'bg-rose-500/20 text-rose-300',
+                                    'Selesai' => 'bg-blue-500/20 text-blue-300',
+                                ];
+                            @endphp
+                            <span class="px-2.5 py-1 text-[10px] font-bold rounded-full {{ $statusStyles[$item->status] ?? 'bg-slate-500/20 text-slate-300' }}">
+                                {{ $item->status }}
+                            </span>
+                        </div>
+
+                        @if($item->keterangan)
+                            <div class="p-3 rounded-lg bg-black/20 text-xs text-slate-300 italic border border-white/5">
+                                "{{ $item->keterangan }}"
+                            </div>
+                        @endif
+
+                        @if(auth()->user()->hasRole('AdminGudang') && $item->status === 'Menunggu Persetujuan')
+                            <div class="flex gap-3 pt-3 border-t border-white/5">
+                                <form method="POST" action="{{ route('permintaan-barang.approve', $item->id_permintaan) }}" class="flex-1" data-loading="true">
+                                    @csrf
+                                    <button type="submit"
+                                        class="w-full inline-flex justify-center items-center py-2.5 rounded-lg bg-emerald-500/10 text-emerald-300 hover:bg-emerald-500/20 text-xs font-bold transition border border-emerald-500/20">
+                                        Setujui
+                                    </button>
+                                </form>
+                                <form method="POST" action="{{ route('permintaan-barang.reject', $item->id_permintaan) }}" class="flex-1" data-loading="true">
+                                    @csrf
+                                    <button type="submit"
+                                        class="w-full inline-flex justify-center items-center py-2.5 rounded-lg bg-rose-500/10 text-rose-300 hover:bg-rose-500/20 text-xs font-bold transition border border-rose-500/20">
+                                        Tolak
+                                    </button>
+                                </form>
+                            </div>
+                        @endif
+                    </div>
+                @empty
+                    <div class="text-center py-10">
+                        <div class="inline-flex justify-center items-center w-16 h-16 rounded-full bg-white/5 mb-4">
+                            <svg class="w-8 h-8 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                            </svg>
+                        </div>
+                        <h3 class="text-white font-medium mb-1">Belum ada permintaan</h3>
+                        <p class="text-slate-400 text-sm">Silakan ajukan permintaan baru.</p>
+                    </div>
+                @endforelse
+            </div>
+
+            <!-- Desktop Table View -->
+            <div class="hidden md:block overflow-x-auto">
                 <table class="min-w-full divide-y divide-white/5 text-[14px] text-slate-100 whitespace-nowrap">
                     <thead class="bg-[#152c3f] text-left text-slate-300 text-[12px] uppercase tracking-wide">
                         <tr>
