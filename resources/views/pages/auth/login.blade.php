@@ -54,13 +54,6 @@
                 @enderror
             </div>
 
-            <div class="flex items-center justify-between text-[13px] text-slate-600">
-                <label for="remember" class="inline-flex items-center gap-2">
-                    <input id="remember" name="remember" type="checkbox" class="rounded border-slate-300 text-[#FF354C] focus:ring-[#FF354C]">
-                    Remember me
-                </label>
-            </div>
-
             <button type="submit"
                 class="w-full h-12 rounded-xl bg-[#FF354C] text-[14px] font-semibold text-white shadow-md hover:bg-[#E02D42] transition duration-150"
                 data-loading-button>
